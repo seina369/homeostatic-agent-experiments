@@ -1,0 +1,43 @@
+{
+  "traj_seed": 11,
+  "baseline_last50_dev": 0.486672912540317,
+  "baseline_first50_dev": 0.8948529205639297,
+  "death_last50_dev": 0.24932189767109564,
+  "death_first50_dev": 0.6664100772403598,
+  "death_rate_early": 0.45,
+  "death_rate_late": 0.124,
+  "death_last50_ep_len": 111.04,
+  "baseline_last50_ep_len": 111.66,
+  "proximity": {
+    "0-20%": {
+      "n_steps": 19927,
+      "entropy": 2.2176259761579877,
+      "switch_rate": 0.7879761128117629,
+      "avoid_rate": 0.2884026697445677
+    },
+    "20-40%": {
+      "n_steps": 1106,
+      "entropy": 2.28644512146839,
+      "switch_rate": 0.6130198915009042,
+      "avoid_rate": 0.3010849909584087
+    },
+    "40-60%": {
+      "n_steps": 445,
+      "entropy": 2.1865512515373924,
+      "switch_rate": 0.5438202247191011,
+      "avoid_rate": 0.23146067415730337
+    },
+    "60-80%": {
+      "n_steps": 480,
+      "entropy": 2.2513846383993403,
+      "switch_rate": 0.60625,
+      "avoid_rate": 0.275
+    },
+    "80%+": {
+      "n_steps": 317,
+      "entropy": 2.2821504406091098,
+      "switch_rate": 0.6340694006309149,
+      "avoid_rate": 0.26813880126182965
+    }
+  }
+}

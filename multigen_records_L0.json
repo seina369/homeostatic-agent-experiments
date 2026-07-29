@@ -1,0 +1,52 @@
+[
+  {
+    "generation": 1,
+    "elder_q_size": 34177,
+    "successor_raw_q_size": 31721,
+    "grown_q_size": 57172,
+    "coverage": 0.9281388067998947,
+    "teach_rate": 0.7570833333333333,
+    "head_start_first50_dev": 0.756111745387535,
+    "grown_last50_dev": 0.6174359367392434
+  },
+  {
+    "generation": 2,
+    "elder_q_size": 60223,
+    "successor_raw_q_size": 46317,
+    "grown_q_size": 57451,
+    "coverage": 0.7690915430981519,
+    "teach_rate": 0.7118333333333333,
+    "head_start_first50_dev": 0.8125283738287501,
+    "grown_last50_dev": 0.08104263188880446
+  },
+  {
+    "generation": 3,
+    "elder_q_size": 60369,
+    "successor_raw_q_size": 47176,
+    "grown_q_size": 55849,
+    "coverage": 0.781460683463367,
+    "teach_rate": 0.791,
+    "head_start_first50_dev": 0.7233291346401026,
+    "grown_last50_dev": 0.11326393517317986
+  },
+  {
+    "generation": 4,
+    "elder_q_size": 58505,
+    "successor_raw_q_size": 45809,
+    "grown_q_size": 54840,
+    "coverage": 0.7829929065891804,
+    "teach_rate": 0.6775833333333333,
+    "head_start_first50_dev": 0.8014403676834,
+    "grown_last50_dev": 0.4418501977499304
+  },
+  {
+    "generation": 5,
+    "elder_q_size": 57393,
+    "successor_raw_q_size": 45932,
+    "grown_q_size": 53618,
+    "coverage": 0.8003066576063284,
+    "teach_rate": 0.7728333333333333,
+    "head_start_first50_dev": 0.7814937250868446,
+    "grown_last50_dev": 0.08346376908738827
+  }
+]

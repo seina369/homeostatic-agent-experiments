@@ -1,0 +1,56 @@
+[
+  {
+    "n": 10,
+    "fiedler_connected": 0.09788696740969288,
+    "fiedler_disconnected": -1.1102230246251565e-16,
+    "pci_connected": 0.8425325704682155,
+    "pci_disconnected": 0.863082145357684,
+    "seconds_connected": 0.0056247711181640625,
+    "seconds_disconnected": 0.0048067569732666016
+  },
+  {
+    "n": 20,
+    "fiedler_connected": 0.1939497233470816,
+    "fiedler_disconnected": 7.401486830834377e-16,
+    "pci_connected": 0.8488756051117811,
+    "pci_disconnected": 0.8842454219914386,
+    "seconds_connected": 0.015177488327026367,
+    "seconds_disconnected": 0.013746976852416992
+  },
+  {
+    "n": 50,
+    "fiedler_connected": 0.8045222693889212,
+    "fiedler_disconnected": 3.7692804325177785e-15,
+    "pci_connected": 1.0427402398726497,
+    "pci_disconnected": 1.031705951620029,
+    "seconds_connected": 0.08990097045898438,
+    "seconds_disconnected": 0.09475255012512207
+  },
+  {
+    "n": 100,
+    "fiedler_connected": 1.629012044254797,
+    "fiedler_disconnected": 1.116452039767493e-15,
+    "pci_connected": 1.0531912139677988,
+    "pci_disconnected": 1.0256367926721295,
+    "seconds_connected": 0.8132553100585938,
+    "seconds_disconnected": 0.4340219497680664
+  },
+  {
+    "n": 200,
+    "fiedler_connected": 4.04869200790376,
+    "fiedler_disconnected": -5.062616992291452e-14,
+    "pci_connected": 1.0447184437914947,
+    "pci_disconnected": 1.0245306477762002,
+    "seconds_connected": 1.8521513938903809,
+    "seconds_disconnected": 1.307950496673584
+  },
+  {
+    "n": 500,
+    "fiedler_connected": 12.79639345244247,
+    "fiedler_disconnected": 4.263256414560601e-13,
+    "pci_connected": 1.0376937887725182,
+    "pci_disconnected": 1.0279042247274945,
+    "seconds_connected": 7.208155870437622,
+    "seconds_disconnected": 7.227606534957886
+  }
+]

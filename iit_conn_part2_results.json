@@ -1,0 +1,68 @@
+[
+  {
+    "n": 10,
+    "fiedler_connected": 0.8299135133739662,
+    "seconds_connected": 0.009472131729125977,
+    "fiedler_disconnected": -1.1102230246251565e-16,
+    "seconds_disconnected": 0.0006539821624755859,
+    "judgment_connected": "統合",
+    "judgment_disconnected": "分断",
+    "correct_connected": true,
+    "correct_disconnected": true
+  },
+  {
+    "n": 20,
+    "fiedler_connected": 0.1628364639174317,
+    "seconds_connected": 0.0004324913024902344,
+    "fiedler_disconnected": 7.401486830834377e-16,
+    "seconds_disconnected": 0.00040650367736816406,
+    "judgment_connected": "統合",
+    "judgment_disconnected": "分断",
+    "correct_connected": true,
+    "correct_disconnected": true
+  },
+  {
+    "n": 50,
+    "fiedler_connected": 0.4541411180258986,
+    "seconds_connected": 0.0052645206451416016,
+    "fiedler_disconnected": 3.7692804325177785e-15,
+    "seconds_disconnected": 0.0004451274871826172,
+    "judgment_connected": "統合",
+    "judgment_disconnected": "分断",
+    "correct_connected": true,
+    "correct_disconnected": true
+  },
+  {
+    "n": 100,
+    "fiedler_connected": 1.4731821216167809,
+    "seconds_connected": 0.008708953857421875,
+    "fiedler_disconnected": 1.116452039767493e-15,
+    "seconds_disconnected": 0.0014650821685791016,
+    "judgment_connected": "統合",
+    "judgment_disconnected": "分断",
+    "correct_connected": true,
+    "correct_disconnected": true
+  },
+  {
+    "n": 200,
+    "fiedler_connected": 3.5221141040979047,
+    "seconds_connected": 0.03425025939941406,
+    "fiedler_disconnected": -5.062616992291452e-14,
+    "seconds_disconnected": 0.0071277618408203125,
+    "judgment_connected": "統合",
+    "judgment_disconnected": "分断",
+    "correct_connected": true,
+    "correct_disconnected": true
+  },
+  {
+    "n": 500,
+    "fiedler_connected": 12.632465964420094,
+    "seconds_connected": 0.12656927108764648,
+    "fiedler_disconnected": 4.263256414560601e-13,
+    "seconds_disconnected": 0.040534257888793945,
+    "judgment_connected": "統合",
+    "judgment_disconnected": "分断",
+    "correct_connected": true,
+    "correct_disconnected": true
+  }
+]

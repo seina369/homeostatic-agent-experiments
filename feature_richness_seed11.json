@@ -1,0 +1,29 @@
+{
+  "traj_seed": 11,
+  "variants": {
+    "baseline(履歴2,方向なし)": {
+      "n_features": 17,
+      "corr_holdout": 0.4060622000295095,
+      "corr_unseen_mean": 0.06824634422117504,
+      "corr_unseen_std": 0.029469393692184726
+    },
+    "履歴8(方向なし)": {
+      "n_features": 47,
+      "corr_holdout": 0.45716906167317645,
+      "corr_unseen_mean": 0.18425270500888655,
+      "corr_unseen_std": 0.04455506369960583
+    },
+    "履歴2+資源方向": {
+      "n_features": 23,
+      "corr_holdout": 0.46635213943441567,
+      "corr_unseen_mean": 0.03870713615073328,
+      "corr_unseen_std": 0.06111972326235761
+    },
+    "履歴8+資源方向": {
+      "n_features": 53,
+      "corr_holdout": 0.497970044598143,
+      "corr_unseen_mean": 0.129407656864413,
+      "corr_unseen_std": 0.06276897093794313
+    }
+  }
+}

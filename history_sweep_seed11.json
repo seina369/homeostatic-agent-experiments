@@ -1,0 +1,40 @@
+{
+  "traj_seed": 11,
+  "sweep": {
+    "2": {
+      "n_features": 17,
+      "corr_holdout": 0.4060622000295095,
+      "corr_unseen_mean": 0.06824634422117504,
+      "corr_unseen_std": 0.029469393692184726
+    },
+    "4": {
+      "n_features": 27,
+      "corr_holdout": 0.423503558986257,
+      "corr_unseen_mean": 0.12246796230898684,
+      "corr_unseen_std": 0.03553242877302525
+    },
+    "8": {
+      "n_features": 47,
+      "corr_holdout": 0.45716906167317645,
+      "corr_unseen_mean": 0.18425270500888655,
+      "corr_unseen_std": 0.04455506369960583
+    },
+    "16": {
+      "n_features": 87,
+      "corr_holdout": 0.5075260279045276,
+      "corr_unseen_mean": 0.2427287026022319,
+      "corr_unseen_std": 0.05181211400516759
+    },
+    "32": {
+      "n_features": 167,
+      "corr_holdout": 0.5451446723919845,
+      "corr_unseen_mean": 0.2695607925062758,
+      "corr_unseen_std": 0.06816819330255795
+    }
+  },
+  "single_map_hist8": {
+    "corr_holdout": 0.6295210626258592,
+    "corr_unseen_mean": 0.11652839042897767,
+    "corr_unseen_std": 0.054420608759720594
+  }
+}

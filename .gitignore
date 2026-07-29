@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+*.egg-info/
+
+# internal notes / non-GitHub materials, not for public repo
+実装記録.md
+引き継ぎメモ.md
+感情AIプロジェクト計画書.docx
+build_doc.js
+.write_test

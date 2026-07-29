@@ -1,0 +1,21 @@
+{
+  "traj_seed": 22,
+  "checkpoints": {
+    "150": {
+      "acc_holdout": 0.745,
+      "corr_holdout": 0.5094817915774333
+    },
+    "500": {
+      "acc_holdout": 0.5993872079662964,
+      "corr_holdout": 0.5203792973018508
+    },
+    "1500": {
+      "acc_holdout": 0.656,
+      "corr_holdout": 0.382456734596302
+    },
+    "3000": {
+      "acc_holdout": 0.6375558867362145,
+      "corr_holdout": 0.5949944764533269
+    }
+  }
+}

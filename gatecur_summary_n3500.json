@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "proposed": {
+      "mi_mean": 0.002472950678511359,
+      "mi_std": 0.0003885035260587954,
+      "mi_values": [
+        0.002523474651223122,
+        0.0029214903181301478,
+        0.001973887066180807
+      ],
+      "signal_rate_mean": 0.17328510729245536,
+      "gate_reach_rate_mean": 0.7866666666666667,
+      "avg_gate_reach_step_mean": 19.246001683501685,
+      "curiosity_bonus_early_mean": 0.6864805673527251,
+      "curiosity_bonus_late_mean": 0.3173896178056672,
+      "signal_gate_lift_ratio_mean": 0.6891834352274171
+    },
+    "controlA": {
+      "mi_mean": 0.0017484282711995914,
+      "mi_std": 0.0013925764761779323,
+      "mi_values": [
+        0.00041727722627984314,
+        0.0036709570683331975,
+        0.0011570505189857343
+      ],
+      "signal_rate_mean": 0.17616883037906528,
+      "gate_reach_rate_mean": 0.9146666666666666,
+      "avg_gate_reach_step_mean": 10.37836440932257,
+      "curiosity_bonus_early_mean": 0.0,
+      "curiosity_bonus_late_mean": 0.0,
+      "signal_gate_lift_ratio_mean": 0.5580098953195316
+    },
+    "controlB": {
+      "mi_mean": 0.0002664575404168462,
+      "mi_std": 0.0001400019533902852,
+      "mi_values": [
+        0.0004267507047716723,
+        0.0002869608292054753,
+        8.56610872733911e-05
+      ],
+      "signal_rate_mean": 0.18862645021917537,
+      "gate_reach_rate_mean": null,
+      "avg_gate_reach_step_mean": null,
+      "curiosity_bonus_early_mean": 0.6734153252812405,
+      "curiosity_bonus_late_mean": 0.2868147077230892,
+      "signal_gate_lift_ratio_mean": null
+    }
+  },
+  "test_proposed_vs_A_p": 0.35,
+  "test_proposed_vs_B_p": 0.05
+}

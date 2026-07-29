@@ -1,0 +1,35 @@
+[
+  {
+    "name": "完全分断(3クラスター孤立)",
+    "p1": 0.0,
+    "p2": 0.0,
+    "n_states": 2,
+    "phi_mean": 0.0,
+    "fiedler": 0.0,
+    "phi_judgment": "分断(自由カット)",
+    "fiedler_judgment": "分断",
+    "agree": true
+  },
+  {
+    "name": "非対称(片方は孤立のまま)",
+    "p1": 0.3,
+    "p2": 0.0,
+    "n_states": 1,
+    "phi_mean": 0.0,
+    "fiedler": 0.0,
+    "phi_judgment": "分断(自由カット)",
+    "fiedler_judgment": "分断",
+    "agree": true
+  },
+  {
+    "name": "対称・中程度結合(全クラスター連結)",
+    "p1": 0.3,
+    "p2": 0.3,
+    "n_states": 1,
+    "phi_mean": 0.154326,
+    "fiedler": 0.18437997428903524,
+    "phi_judgment": "統合",
+    "fiedler_judgment": "統合",
+    "agree": true
+  }
+]

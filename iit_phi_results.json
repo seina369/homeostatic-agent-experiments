@@ -1,0 +1,358 @@
+{
+  "ff": [
+    {
+      "state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0023932456970214844
+    },
+    {
+      "state": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0013568401336669922
+    },
+    {
+      "state": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0011982917785644531
+    },
+    {
+      "state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0002079010009765625
+    },
+    {
+      "state": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00015926361083984375
+    },
+    {
+      "state": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00016236305236816406
+    },
+    {
+      "state": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0002143383026123047
+    },
+    {
+      "state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.001386880874633789
+    },
+    {
+      "state": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0011649131774902344
+    },
+    {
+      "state": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0011076927185058594
+    },
+    {
+      "state": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0010454654693603516
+    },
+    {
+      "state": [
+        1,
+        1,
+        0,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00016999244689941406
+    },
+    {
+      "state": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00014138221740722656
+    },
+    {
+      "state": [
+        1,
+        0,
+        1,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00013589859008789062
+    },
+    {
+      "state": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0001327991485595703
+    },
+    {
+      "state": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "phi": 0.0,
+      "reachable": true,
+      "seconds": 0.0009922981262207031
+    }
+  ],
+  "rec": [
+    {
+      "state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.14477276802062988
+    },
+    {
+      "state": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.14137983322143555
+    },
+    {
+      "state": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.12682604789733887
+    },
+    {
+      "state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "phi": 1.214285,
+      "reachable": true,
+      "seconds": 0.15225791931152344
+    },
+    {
+      "state": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0003762245178222656
+    },
+    {
+      "state": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00015687942504882812
+    },
+    {
+      "state": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.00013828277587890625
+    },
+    {
+      "state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.10077524185180664
+    },
+    {
+      "state": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.12594842910766602
+    },
+    {
+      "state": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.1324148178100586
+    },
+    {
+      "state": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.12472081184387207
+    },
+    {
+      "state": [
+        1,
+        1,
+        0,
+        1
+      ],
+      "phi": 0.151786,
+      "reachable": true,
+      "seconds": 0.14176678657531738
+    },
+    {
+      "state": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0003485679626464844
+    },
+    {
+      "state": [
+        1,
+        0,
+        1,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0001595020294189453
+    },
+    {
+      "state": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "phi": null,
+      "reachable": false,
+      "seconds": 0.0001571178436279297
+    },
+    {
+      "state": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "phi": 0.0625,
+      "reachable": true,
+      "seconds": 0.10465240478515625
+    }
+  ]
+}

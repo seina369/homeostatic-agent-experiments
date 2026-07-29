@@ -1,0 +1,21 @@
+{
+  "traj_seed": 22,
+  "n_single_map_samples": 11329,
+  "n_multi_map_samples": 28296,
+  "corr_single_holdout": 0.5851612078678062,
+  "corr_single_unseen_mean": 0.0026547545840185384,
+  "corr_single_unseen_std": 0.0325794534795,
+  "corr_single_unseen_list": [
+    -0.011946561745700211,
+    0.04780025856193379,
+    -0.027889433064177963
+  ],
+  "corr_multi_holdout": 0.4095504891740622,
+  "corr_multi_unseen_mean": 0.05325634856494336,
+  "corr_multi_unseen_std": 0.011007593176167405,
+  "corr_multi_unseen_list": [
+    0.06662582855281923,
+    0.053477650486484285,
+    0.03966556665552658
+  ]
+}

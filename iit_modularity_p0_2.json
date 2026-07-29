@@ -1,0 +1,56 @@
+[
+  {
+    "p": 0.2,
+    "state": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "phi_whole": 0.371391,
+    "phi_cluster1": 0.09375,
+    "phi_cluster2": 0.637777,
+    "phi_approx_sum": 0.731527,
+    "phi_approx_min": 0.09375,
+    "error_sum": -0.360136,
+    "error_min": 0.277641,
+    "seconds": 0.979259729385376
+  },
+  {
+    "p": 0.2,
+    "state": [
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "phi_whole": 0.450833,
+    "phi_cluster1": 0.234723,
+    "phi_cluster2": 0.86,
+    "phi_approx_sum": 1.094723,
+    "phi_approx_min": 0.234723,
+    "error_sum": -0.6438899999999999,
+    "error_min": 0.21611,
+    "seconds": 0.867929220199585
+  },
+  {
+    "p": 0.2,
+    "state": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "phi_whole": 0.477499,
+    "phi_cluster1": 0.09375,
+    "phi_cluster2": 0.637777,
+    "phi_approx_sum": 0.731527,
+    "phi_approx_min": 0.09375,
+    "error_sum": -0.25402800000000003,
+    "error_min": 0.383749,
+    "seconds": 0.8648607730865479
+  }
+]
