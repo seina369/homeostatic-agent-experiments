@@ -4,6 +4,16 @@ Independent research project studying computational analogues of emotion-adjacen
 
 All experiments are implemented from scratch in Python (tabular Q-learning, no external RL libraries; `pyphi` is used only for the exact integrated-information experiments) and run in grid-world environments designed to isolate specific mechanisms rather than chase benchmark performance.
 
+## TL;DR
+
+- Homeostatic reward alone produces stable regulatory behavior; adding an irreversible death condition does **not** trigger panicked behavior near the threshold, contrary to the project's own prior risk analysis.
+- Behavior-only self-monitoring (inferring internal state from action sequence alone) beats chance, but the accuracy curve is non-trivial — a reproducible dip-then-recover pattern under tabular Q-learning that turns out to be an artifact of the tabular representation, not a general property of the task.
+- Two agents can learn a signal that tracks internal state, but only under specific reward design (a direct payoff for correct inference, not just collision-avoidance pressure); the resulting convention shows early evidence of being transmissible and normative rather than a private habit.
+- Swapping tabular Q-learning for a small from-scratch neural network doesn't just add noise to the tabular results — it sometimes improves them (more reliable multi-generation knowledge transfer) and sometimes reveals genuinely new failure modes, including a legacy-transfer dose-response that *reverses direction* under the NN, traced through four diagnostic experiments to a specific, mechanistic cause (elder competence erosion) rather than left as an unexplained anomaly.
+- Exact integrated information (Φ) is non-monotonic in coupling strength, and no cheaper proxy tested so far (algebraic connectivity, cluster synergy, PCI, a GWT-inspired reach metric) reproduces that full shape; extending these proxies from toy graphs to real trained networks has so far returned null results.
+
+Full numbered findings with figures: [Key findings, summarized](#key-findings-summarized).
+
 ## Motivation
 
 The project is grounded in a set of computational hypotheses loosely inspired by constructionist theories of emotion (Barrett), interoception/homeostasis accounts (Damasio), higher-order theories of self-representation (Rosenthal), integrated information theory (Tononi/IIT), and Wittgenstein's account of rule-following as a communal practice:
