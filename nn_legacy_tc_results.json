@@ -1,0 +1,28 @@
+{
+  "conditions": {
+    "A": {
+      "succ_first50_mean": 0.5661767180129134,
+      "succ_first50_std": 0.029021233409643892,
+      "total_transfer_mean": 15507.666666666666,
+      "total_transfer_std": 326.5030202344569,
+      "teach_rate_mean": 0.8434722222222222,
+      "teach_rate_std": 0.030417567211427805
+    },
+    "B": {
+      "succ_first50_mean": 0.46431493025704457,
+      "succ_first50_std": 0.09305902777829307,
+      "total_transfer_mean": 29373.333333333332,
+      "total_transfer_std": 1875.7692348000119,
+      "teach_rate_mean": 0.3139722222222222,
+      "teach_rate_std": 0.05553170321292508
+    }
+  },
+  "reference": {
+    "bonus0_normal_mean": 0.3761827072126085,
+    "bonus0_normal_std": 0.08307036749833877,
+    "bonus1_normal_mean": 0.41855765416706264,
+    "bonus1_normal_std": 0.04226088841858296,
+    "bonus3_normal_mean": 0.5861799065001394,
+    "bonus3_normal_std": 0.038108946133970235
+  }
+}

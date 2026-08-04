@@ -1,0 +1,26 @@
+{
+  "0.0": {
+    "teach_rate_mean": 0.3242777777777777,
+    "teach_rate_std": 0.05659768404719555,
+    "coverage_mean": 0.9992189308687579,
+    "coverage_std": 8.49927155672886e-05,
+    "succ_first50_mean": 0.3761827072126085,
+    "succ_first50_std": 0.08307036749833877
+  },
+  "1.0": {
+    "teach_rate_mean": 0.8469444444444444,
+    "teach_rate_std": 0.05937601201216818,
+    "coverage_mean": 1.0,
+    "coverage_std": 0.0,
+    "succ_first50_mean": 0.41855765416706264,
+    "succ_first50_std": 0.04226088841858296
+  },
+  "3.0": {
+    "teach_rate_mean": 0.8776388888888889,
+    "teach_rate_std": 0.010646102863153244,
+    "coverage_mean": 0.9999401770758555,
+    "coverage_std": 8.460239066600531e-05,
+    "succ_first50_mean": 0.5861799065001394,
+    "succ_first50_std": 0.038108946133970235
+  }
+}

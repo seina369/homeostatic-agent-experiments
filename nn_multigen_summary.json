@@ -1,0 +1,182 @@
+{
+  "lineages": [
+    0,
+    1,
+    2
+  ],
+  "n_generations": 5,
+  "total_records": 15,
+  "converged": 15,
+  "stuck": 0,
+  "convergence_rate": 1.0,
+  "head_start_first50_dev_mean": 0.5931086370210497,
+  "head_start_first50_dev_std": 0.10532811467466865,
+  "grown_last50_dev_mean": 0.07045327727207037,
+  "grown_last50_dev_std": 0.00941112413812401,
+  "coverage_mean": 0.9999376142774425,
+  "coverage_std": 8.091918239754893e-05,
+  "by_generation": {
+    "1": {
+      "n": 3,
+      "head_start_first50_dev_mean": 0.5801065704020102,
+      "grown_last50_dev_mean": 0.06855861339812515
+    },
+    "2": {
+      "n": 3,
+      "head_start_first50_dev_mean": 0.7284901733905539,
+      "grown_last50_dev_mean": 0.06967402170446019
+    },
+    "3": {
+      "n": 3,
+      "head_start_first50_dev_mean": 0.5592223621146566,
+      "grown_last50_dev_mean": 0.06910399243899508
+    },
+    "4": {
+      "n": 3,
+      "head_start_first50_dev_mean": 0.5309313046169217,
+      "grown_last50_dev_mean": 0.07797327539805825
+    },
+    "5": {
+      "n": 3,
+      "head_start_first50_dev_mean": 0.5667927745811053,
+      "grown_last50_dev_mean": 0.06695648342071321
+    }
+  },
+  "records": [
+    {
+      "lineage": 0,
+      "generation": 1,
+      "coverage": 1.0,
+      "teach_rate": 0.8715833333333334,
+      "head_start_first50_dev": 0.6103368254926099,
+      "grown_last50_dev": 0.0760086484175033,
+      "n_visited_states": 7119
+    },
+    {
+      "lineage": 0,
+      "generation": 2,
+      "coverage": 0.9998604521350823,
+      "teach_rate": 0.8801666666666667,
+      "head_start_first50_dev": 0.6366070445338861,
+      "grown_last50_dev": 0.06420264377931624,
+      "n_visited_states": 7939
+    },
+    {
+      "lineage": 0,
+      "generation": 3,
+      "coverage": 1.0,
+      "teach_rate": 0.874,
+      "head_start_first50_dev": 0.4936981428664567,
+      "grown_last50_dev": 0.0660608914314687,
+      "n_visited_states": 8433
+    },
+    {
+      "lineage": 0,
+      "generation": 4,
+      "coverage": 1.0,
+      "teach_rate": 0.8798333333333334,
+      "head_start_first50_dev": 0.6063655890522903,
+      "grown_last50_dev": 0.09934417886580965,
+      "n_visited_states": 8804
+    },
+    {
+      "lineage": 0,
+      "generation": 5,
+      "coverage": 1.0,
+      "teach_rate": 0.8792500000000001,
+      "head_start_first50_dev": 0.7169790736990032,
+      "grown_last50_dev": 0.06300412438267458,
+      "n_visited_states": 9088
+    },
+    {
+      "lineage": 1,
+      "generation": 1,
+      "coverage": 1.0,
+      "teach_rate": 0.8411666666666666,
+      "head_start_first50_dev": 0.5921936696638015,
+      "grown_last50_dev": 0.06729727693125265,
+      "n_visited_states": 6988
+    },
+    {
+      "lineage": 1,
+      "generation": 2,
+      "coverage": 1.0,
+      "teach_rate": 0.897,
+      "head_start_first50_dev": 0.7734378156498387,
+      "grown_last50_dev": 0.07964557649909056,
+      "n_visited_states": 7855
+    },
+    {
+      "lineage": 1,
+      "generation": 3,
+      "coverage": 0.9998741029837593,
+      "teach_rate": 0.8751666666666666,
+      "head_start_first50_dev": 0.5500081568883038,
+      "grown_last50_dev": 0.07646282676730992,
+      "n_visited_states": 8344
+    },
+    {
+      "lineage": 1,
+      "generation": 4,
+      "coverage": 1.0,
+      "teach_rate": 0.8615833333333334,
+      "head_start_first50_dev": 0.44712168900473087,
+      "grown_last50_dev": 0.062312139051262205,
+      "n_visited_states": 8655
+    },
+    {
+      "lineage": 1,
+      "generation": 5,
+      "coverage": 0.9998853079481592,
+      "teach_rate": 0.8738333333333334,
+      "head_start_first50_dev": 0.38753863982872533,
+      "grown_last50_dev": 0.07202139979642895,
+      "n_visited_states": 8922
+    },
+    {
+      "lineage": 2,
+      "generation": 1,
+      "coverage": 0.999818676337262,
+      "teach_rate": 0.8365833333333333,
+      "head_start_first50_dev": 0.5377892160496192,
+      "grown_last50_dev": 0.062369914845619503,
+      "n_visited_states": 7229
+    },
+    {
+      "lineage": 2,
+      "generation": 2,
+      "coverage": 0.9998637416541764,
+      "teach_rate": 0.8137500000000001,
+      "head_start_first50_dev": 0.7754256599879372,
+      "grown_last50_dev": 0.06517384483497377,
+      "n_visited_states": 7870
+    },
+    {
+      "lineage": 2,
+      "generation": 3,
+      "coverage": 1.0,
+      "teach_rate": 0.8830833333333333,
+      "head_start_first50_dev": 0.6339607865892092,
+      "grown_last50_dev": 0.06478825911820664,
+      "n_visited_states": 8342
+    },
+    {
+      "lineage": 2,
+      "generation": 4,
+      "coverage": 0.999761933103202,
+      "teach_rate": 0.85325,
+      "head_start_first50_dev": 0.539306635793744,
+      "grown_last50_dev": 0.07226350827710289,
+      "n_visited_states": 8743
+    },
+    {
+      "lineage": 2,
+      "generation": 5,
+      "coverage": 1.0,
+      "teach_rate": 0.8808333333333334,
+      "head_start_first50_dev": 0.5958606102155877,
+      "grown_last50_dev": 0.06584392608303614,
+      "n_visited_states": 9139
+    }
+  ]
+}

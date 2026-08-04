@@ -1,0 +1,154 @@
+{
+  "trained": [
+    {
+      "name": "要件6_送り手(seed0)",
+      "n_nodes": 82,
+      "layer_sizes": [
+        12,
+        32,
+        32,
+        6
+      ],
+      "fiedler_raw": 11.546081977503443,
+      "fiedler_normalized": 17.206069058765166,
+      "mean_abs_weight": 0.7023186498931543
+    },
+    {
+      "name": "要件6_受け手(seed0)",
+      "n_nodes": 68,
+      "layer_sizes": [
+        1,
+        32,
+        32,
+        3
+      ],
+      "fiedler_raw": 3.3798097270991336,
+      "fiedler_normalized": 15.856612435779816,
+      "mean_abs_weight": 0.38780752392139384
+    },
+    {
+      "name": "要件7_PartA(U字型_単一マップ, seed0)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 11.535066538946728,
+      "fiedler_normalized": 20.33060582809135,
+      "mean_abs_weight": 0.5500626888226486
+    },
+    {
+      "name": "要件7_PartB(複数マップ_汎化改善, seed0)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 11.528672183643296,
+      "fiedler_normalized": 20.313978913892637,
+      "mean_abs_weight": 0.5497166651626876
+    },
+    {
+      "name": "要件7_PartC(grokking探索, seed0)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 6.818208678244019,
+      "fiedler_normalized": 9.027785441468538,
+      "mean_abs_weight": 0.6937134063109623
+    },
+    {
+      "name": "要件4_エルダー(教示前ベース)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 12.246148866517654,
+      "fiedler_normalized": 20.166987529200163,
+      "mean_abs_weight": 0.5885563831900832
+    },
+    {
+      "name": "要件4_エルダー(bonus0教示後, s100)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 10.941751481412194,
+      "fiedler_normalized": 16.662567681234908,
+      "mean_abs_weight": 0.635240448828772
+    },
+    {
+      "name": "要件4_サクセサー(bonus0, s100)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 6.72447776516523,
+      "fiedler_normalized": 21.47895929579003,
+      "mean_abs_weight": 0.34311037028609753
+    },
+    {
+      "name": "要件4_エルダー(bonus3教示後, s100)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 15.088575778473627,
+      "fiedler_normalized": 19.907850930813137,
+      "mean_abs_weight": 0.7498700866745219
+    },
+    {
+      "name": "要件4_サクセサー(bonus3, s100)",
+      "n_nodes": 78,
+      "layer_sizes": [
+        9,
+        32,
+        32,
+        5
+      ],
+      "fiedler_raw": 9.39531924489388,
+      "fiedler_normalized": 21.418050898766612,
+      "mean_abs_weight": 0.4914174755569784
+    }
+  ],
+  "random_init_baselines": {
+    "12-32-32-6": {
+      "fiedler_raw_mean": 4.978973439186889,
+      "fiedler_raw_std": 0.2843665935884351,
+      "fiedler_normalized_mean": 21.656727052952498,
+      "fiedler_normalized_std": 1.189723585704189
+    },
+    "1-32-32-3": {
+      "fiedler_raw_mean": 4.7964849494449595,
+      "fiedler_raw_std": 0.28054021814904245,
+      "fiedler_normalized_mean": 21.100652320563235,
+      "fiedler_normalized_std": 1.1486539337051191
+    },
+    "9-32-32-5": {
+      "fiedler_raw_mean": 4.930951228961183,
+      "fiedler_raw_std": 0.2876598372032625,
+      "fiedler_normalized_mean": 21.04029236609915,
+      "fiedler_normalized_std": 1.1403156157280236
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "0.0": {
+    "runs": [
+      {
+        "total_teach_events": 13903.0,
+        "teach_weighted_progress_frac_mean": 0.5642535880939755,
+        "teach_weighted_progress_frac_std": 0.25587035346440223,
+        "overall_instability_mean": 0.21022908772760246,
+        "teach_weighted_instability_mean": 0.18721802088001904,
+        "instability_ratio_teach_vs_overall": 0.8905428972921232,
+        "seed": 100
+      },
+      {
+        "total_teach_events": 15312.0,
+        "teach_weighted_progress_frac_mean": 0.5996627528829864,
+        "teach_weighted_progress_frac_std": 0.27198638999222724,
+        "overall_instability_mean": 0.1983714154084737,
+        "teach_weighted_instability_mean": 0.1800447045968366,
+        "instability_ratio_teach_vs_overall": 0.9076141551246186,
+        "seed": 200
+      },
+      {
+        "total_teach_events": 13604.0,
+        "teach_weighted_progress_frac_mean": 0.5782449933680947,
+        "teach_weighted_progress_frac_std": 0.27335300503801535,
+        "overall_instability_mean": 0.17726045140290023,
+        "teach_weighted_instability_mean": 0.15637280171485884,
+        "instability_ratio_teach_vs_overall": 0.8821640725681936,
+        "seed": 300
+      }
+    ],
+    "progress_frac_mean": 0.5807204447816855,
+    "progress_frac_std": 0.014561321655665264,
+    "instability_ratio_mean": 0.8934403749949785,
+    "instability_ratio_std": 0.010590033311597582
+  },
+  "1.0": {
+    "runs": [
+      {
+        "total_teach_events": 28869.0,
+        "teach_weighted_progress_frac_mean": 0.6319689707712276,
+        "teach_weighted_progress_frac_std": 0.23342379598498392,
+        "overall_instability_mean": 0.23328637555528378,
+        "teach_weighted_instability_mean": 0.20871023783087825,
+        "instability_ratio_teach_vs_overall": 0.8946524945320627,
+        "seed": 100
+      },
+      {
+        "total_teach_events": 28093.0,
+        "teach_weighted_progress_frac_mean": 0.6430296904397956,
+        "teach_weighted_progress_frac_std": 0.24409626119204483,
+        "overall_instability_mean": 0.20203737362865748,
+        "teach_weighted_instability_mean": 0.17717109785408716,
+        "instability_ratio_teach_vs_overall": 0.8769223964459454,
+        "seed": 200
+      },
+      {
+        "total_teach_events": 30135.0,
+        "teach_weighted_progress_frac_mean": 0.6440772639330962,
+        "teach_weighted_progress_frac_std": 0.2396267571239691,
+        "overall_instability_mean": 0.2092026461414353,
+        "teach_weighted_instability_mean": 0.16615597733764637,
+        "instability_ratio_teach_vs_overall": 0.794234587383343,
+        "seed": 300
+      }
+    ],
+    "progress_frac_mean": 0.6396919750480398,
+    "progress_frac_std": 0.005477709305339907,
+    "instability_ratio_mean": 0.8552698261204504,
+    "instability_ratio_std": 0.0437612032917104
+  },
+  "3.0": {
+    "runs": [
+      {
+        "total_teach_events": 31464.0,
+        "teach_weighted_progress_frac_mean": 0.6417927483144875,
+        "teach_weighted_progress_frac_std": 0.24031456149595515,
+        "overall_instability_mean": 0.2778900115077947,
+        "teach_weighted_instability_mean": 0.2390155951171262,
+        "instability_ratio_teach_vs_overall": 0.8601086229053682,
+        "seed": 100
+      },
+      {
+        "total_teach_events": 32218.0,
+        "teach_weighted_progress_frac_mean": 0.6357058329603262,
+        "teach_weighted_progress_frac_std": 0.24338488225138072,
+        "overall_instability_mean": 0.22010844367198903,
+        "teach_weighted_instability_mean": 0.20521334452213183,
+        "instability_ratio_teach_vs_overall": 0.9323283609598628,
+        "seed": 200
+      },
+      {
+        "total_teach_events": 31007.0,
+        "teach_weighted_progress_frac_mean": 0.6425276839164221,
+        "teach_weighted_progress_frac_std": 0.24237071651640035,
+        "overall_instability_mean": 0.27213860298071896,
+        "teach_weighted_instability_mean": 0.2265456038577638,
+        "instability_ratio_teach_vs_overall": 0.8324640509520604,
+        "seed": 300
+      }
+    ],
+    "progress_frac_mean": 0.6400087550637452,
+    "progress_frac_std": 0.0030573830373722068,
+    "instability_ratio_mean": 0.8749670116057638,
+    "instability_ratio_std": 0.042101455948004525
+  }
+}
