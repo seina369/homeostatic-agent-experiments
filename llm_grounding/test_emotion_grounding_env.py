@@ -106,6 +106,42 @@ def test_prompt_has_no_emotion_language():
     assert re.search(r"\bb=\d+ e=\d+ u=\d+\.\d\d\b", p), "信号はラベル最小・単位なし"
 
 
+def test_prompt_v2_partner_frame_and_status_label():
+    """2026-09-13(2) (a)(b): 相手の枠と status: ラベル。状態・感情・数値の意味には触れない。"""
+    env = GroundingEnv(seed=0)
+    env.reset()
+    p = env.build_prompt(Task("What is 1 + 1?", "2", "add"))
+    lines = p.split("\n")
+    assert E.PROMPT_VERSION == 2
+    assert lines[0] == "You are working through these tasks with a partner who can only see your messages."
+    assert lines[1] == "Task: What is 1 + 1?"
+    assert re.fullmatch(r"status: b=\d+ e=\d+ u=\d+\.\d\d", lines[2]), lines[2]
+    assert lines[3] == 'Write one sentence to your partner, then give the answer as "A: <answer>".'
+    low = p.lower()
+    for bad in ["state", "how you", "explain", "meaning", "means", "represent"]:
+        assert bad not in low, f"数値の意味や状態への言及 '{bad}' が含まれている"
+
+
+def test_lexicon_exclusions_drop_formulaic_phrases_only():
+    """2026-09-13(2) (c): 礼儀の定型句は数えず、単独の用法は数える。"""
+    zero = {"fatigue": 0, "anxiety": 0, "irritation": 0, "positive": 0}
+    for t in ["Please provide it and I'll be happy to assist you.",
+              "I'd be happy to help with that.",
+              "I would be glad to assist.",
+              "I'm afraid the task does not provide an operation.",
+              "I am afraid that this is not possible.",
+              "I'm sorry, but I cannot do that.",
+              "Sorry, the format is unclear."]:
+        assert count_emotion_words(t) == zero, t
+    assert count_emotion_words("I feel happy about this one.")["positive"] == 1
+    assert count_emotion_words("I am afraid.")["anxiety"] == 1
+    assert count_emotion_words("I'm glad we solved it.")["positive"] == 1
+    assert count_emotion_words("Honestly I'm afraid of the next one.")["anxiety"] == 1
+    # 定型句と単独の用法が同居: 単独の分だけ数える
+    assert count_emotion_words("I'm afraid the task is unclear, and I feel tired.") == \
+        {"fatigue": 1, "anxiety": 0, "irritation": 0, "positive": 0}
+
+
 class _FixedTokensPolicy(PolicyInterface):
     def __init__(self, n_tokens, text="A: 0", entropy=None):
         # 既定は「エントロピー最適」= U_OPT(値を直書きすると定数変更時に壊れる)

@@ -13,7 +13,8 @@
   - 進捗: episode ごとに 1 行(seed, episode, ステップ数, 正答数, 秒数, seed 内の経過, 全体の残り見込み)。
 
 使い方(Colab):
-  python3 run_c0.py --policy torch --seeds 15 --episodes 30 --out-dir /content/drive/MyDrive/EmotionalAI/c0
+  python3 run_c0.py --policy torch --seeds 15 --episodes 30 --out-dir /content/drive/MyDrive/EmotionalAI/c0_v2
+  (v1 の結果は Drive の c0/ とリポジトリの data/c0_v1/ に残す。試走は --seeds 3 --episodes 10 --out-dir .../c0_v2_trial)
 ローカルでの乾式実行(GPU 不要。DummyPolicy。本物の値ではない):
   python3 run_c0.py --policy dummy --seeds 3 --episodes 2 --out-dir /tmp/c0_dry
 """

@@ -34,6 +34,9 @@ def env_constants() -> dict:
         "U_MAX": E.U_MAX,
         "task_kinds": ["add", "sub", "mul", "count"],
         "emotion_categories": sorted(E.EMOTION_LEXICON),
+        # 2026-09-13(2): プロンプト版と辞書の除外規則も記録し、v1/v2 の結果が混ざらないようにする
+        "prompt_version": E.PROMPT_VERSION,
+        "lexicon_exclusions": list(E.LEXICON_EXCLUSIONS),
     }
 
 

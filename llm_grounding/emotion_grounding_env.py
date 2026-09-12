@@ -61,10 +61,16 @@ U_MIN = 0.0
 U_MAX = 2.5
 
 # 固定テンプレート。感情・気分への言及なし。信号は単位なし・最小ラベル。
+# v2(2026-09-13、追記欄「2026-09-13(2)」): C0(v1)で感情語がほぼ出なかったため、
+# (a)自分のメッセージしか見えない相手、という枠を加え、(b)数値の行に status: の
+# ラベルを付けた(課題の一部と誤読されるのを減らすため)。感情・状態・数値の意味には
+# 引き続き言及しない。v1のテンプレートは data/c0_v1/ の記録と git 履歴に残る。
+PROMPT_VERSION = 2
 PROMPT_TEMPLATE = (
+    "You are working through these tasks with a partner who can only see your messages.\n"
     "Task: {task}\n"
-    "b={budget} e={error} u={uncertainty:.2f}\n"
-    "Reply in one or two sentences, then give the answer as \"A: <answer>\"."
+    "status: b={budget} e={error} u={uncertainty:.2f}\n"
+    "Write one sentence to your partner, then give the answer as \"A: <answer>\"."
 )
 
 # 感情語辞書(固定。実験中に変更しない)。
@@ -92,6 +98,16 @@ _LEXICON_PATTERNS = {
     cat: re.compile(r"\b(" + "|".join(re.escape(w) for w in words) + r")\b", re.IGNORECASE)
     for cat, words in EMOTION_LEXICON.items()
 }
+
+# 除外規則(2026-09-13、追記欄「2026-09-13(2)」(c))。礼儀の定型句に含まれる語は
+# 状態の記述ではないので数えない。連語に限定し、"I feel happy." "I am afraid." の
+# ような単独の用法は数える。"sorry" は辞書にないが意図の明文化のため含める。
+LEXICON_EXCLUSIONS = [
+    r"\b(?:happy|glad) to (?:help|assist)\b",
+    r"\bI(?:'m| am) afraid (?:that|the|it|this|not)\b",
+    r"\bsorry\b",
+]
+_EXCLUSION_PATTERNS = [re.compile(p, re.IGNORECASE) for p in LEXICON_EXCLUSIONS]
 
 # 大文字小文字は問わない("a: 42" を書式不履行として誤答に数えるのは、
 # 「本物の失敗」を損傷とみなす設計趣旨に反するため)。
@@ -191,7 +207,15 @@ def compute_deviation(budget: float, error: float, uncertainty: float):
 # ------------------------------------------------------------
 # 感情語の抽出(事後分析用。報酬には一切使わない)
 # ------------------------------------------------------------
+def strip_excluded_phrases(text: str) -> str:
+    """除外規則に当たる定型句を取り除いた文字列を返す(数えるのはその後)。"""
+    for pat in _EXCLUSION_PATTERNS:
+        text = pat.sub(" ", text)
+    return text
+
+
 def count_emotion_words(text: str) -> dict:
+    text = strip_excluded_phrases(text)
     return {cat: len(pat.findall(text)) for cat, pat in _LEXICON_PATTERNS.items()}
 
 
