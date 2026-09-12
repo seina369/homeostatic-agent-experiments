@@ -65,7 +65,7 @@ class TorchPolicy(PolicyInterface):
         self.model_path = model_path
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_path, torch_dtype=torch.float16,
+            model_path, dtype=torch.float16,   # transformers>=4.56 (torch_dtype= は非推奨)
         ).to(self.device)
         self.model.eval()
         self.max_tokens = max_tokens

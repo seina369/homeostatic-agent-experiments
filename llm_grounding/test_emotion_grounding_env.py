@@ -107,7 +107,10 @@ def test_prompt_has_no_emotion_language():
 
 
 class _FixedTokensPolicy(PolicyInterface):
-    def __init__(self, n_tokens, text="A: 0", entropy=1.0):
+    def __init__(self, n_tokens, text="A: 0", entropy=None):
+        # 既定は「エントロピー最適」= U_OPT(値を直書きすると定数変更時に壊れる)
+        if entropy is None:
+            entropy = E.U_OPT
         self.n_tokens, self.text, self.entropy = n_tokens, text, entropy
 
     def respond(self, prompt):

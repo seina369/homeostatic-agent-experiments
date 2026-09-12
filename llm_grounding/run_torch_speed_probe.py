@@ -6,7 +6,8 @@ run_mlx_speed_probe.py のColab版。emotion_grounding_env.GroundingEnv を、
 TorchPolicy(Qwen2.5-1.5B-Instruct, fp16)またはDummyPolicy(検算用)に
 接続してN episode走らせ、
   - エピソードごとの秒数
-  - 正答率(全体、および課題の種類(kind: add/sub/mul/reverse/count)ごと)
+  - 正答率(全体、および課題の種類(kind)ごと。2026-09-12の実測時点では
+    add/sub/mul/reverse/countの5種、以後はreverseを除いた4種)
   - 書式不履行率("A: <answer>" が見つからない割合。誤答とは別に集計)
   - エントロピー(uncertainty信号そのもの)の分布
   - 不正解になった応答の実例(最大10件。遭遇順、選別なし)

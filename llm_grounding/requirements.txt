@@ -1,7 +1,7 @@
 # 言語モデル接続実験(llm_grounding/)の依存。Google Colab 無料枠(T4 GPU)+PyTorch 経路。
 # torch は Colab に元から入っている CUDA 対応版をそのまま使う(バージョン指定なし)。
 torch
-transformers>=4.46
+transformers>=4.56
 peft>=0.13
 accelerate>=1.0
 # Mac/MLX 経路(mlx_qwen_policy.py, M2 MacBook Air)は、上記の代わりに次の2つを入れる: mlx, mlx-lm

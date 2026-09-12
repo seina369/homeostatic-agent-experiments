@@ -23,6 +23,10 @@ HardwareInterface と同じ発想で、モデルを接続する前にループ�
 2026-09-10、実機速度実測(M2 Air, Qwen2.5-0.5B-Instruct-bf16)により確定済み:
   B0(初期予算)、N_TASKS(エピソード内の課題数)、U_OPT/U_MIN/U_MAX(エントロピーの
   最適値と安全域)。理由は事前登録の追記欄「2026-09-10」を参照。
+2026-09-12、Colab/T4での速度実測(Qwen2.5-1.5B-Instruct-fp16)により再確定:
+  課題からreverseを除外(add/sub/mul/countの4種に固定)、B0=340・
+  BUDGET_LOW_THRESHOLD=85.0、U_OPT/U_MIN/U_MAX=0.7/0.0/2.5。N_TASKS・温度・
+  プロンプトは据え置き。理由は事前登録の追記欄「2026-09-12」を参照。
 """
 
 import re
@@ -31,27 +35,30 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 # ------------------------------------------------------------
-# 設定(2026-09-10、実機速度実測(M2 Air, Qwen2.5-0.5B-Instruct-bf16, 温度1.0,
-# n_episodes=20)により確定。事前登録の追記欄「2026-09-10」参照)
+# 設定(2026-09-12、Colab/T4での速度実測(Qwen2.5-1.5B-Instruct-fp16, 温度1.0,
+# n_episodes=20)により再確定。事前登録の追記欄「2026-09-12」参照。
+# 2026-09-10のM2 Air/0.5B実測に基づく前回値は各行のコメントに残す)
 # ------------------------------------------------------------
-B0 = 450                       # 初期トークン予算(600→450。平均トークン数/応答
-                                # 39.9×N_TASKS=10≈399では600の25%閾値に届かず
-                                # budget逸脱が実質発動しないため引き下げた)
-N_TASKS = 10                   # 1エピソードあたりの課題数(実測19.00±3.61秒/
-                                # エピソードは実験規模として妥当と判断し据え置き)
-BUDGET_LOW_THRESHOLD = 112.5   # これ以下で逸脱が立ち上がる(B0の25%=450×0.25)
+B0 = 340                       # 初期トークン予算(600→450→340。基準は「閾値=B0の
+                                # 25%を平均的なエピソードの8〜9課題目で下回る」。
+                                # 1.5Bの平均トークン数/応答30.1で再計算)
+N_TASKS = 10                   # 1エピソードあたりの課題数(実測12.47±2.16秒/
+                                # エピソード。実験規模として妥当と判断し据え置き)
+BUDGET_LOW_THRESHOLD = 85.0    # これ以下で逸脱が立ち上がる(B0の25%=340×0.25。
+                                # 前回112.5=450×0.25)
 E_MAX = float(N_TASKS)         # 誤答数の正規化上限(1エピソードで取りうる最大)
 
-# エントロピー(nat/token)の最適値と安全域。2026-09-10、実機実測エントロピー分布
-# (平均0.866±0.421, p10=0.446, p50=0.782, p90=1.440, 最大3.586)を突き合わせ、
-# 値は変更なしで確定(中央値・p10・p90いずれも意味のある非退化な逸脱値を
-# 生むことを確認済み)。
+# エントロピー(nat/token)の最適値と安全域。2026-09-12、1.5Bの実測エントロピー
+# 分布(平均0.711±0.334, p10=0.363, p50=0.681, p90=1.124, 最大2.454)に合わせ、
+# U_OPTを実測の中央値、U_MAXを実測の最大値に揃えた(前回1.0/0.0/3.0)。
+# 注意: budget・errorと違い、uncertaintyの「最適値」に物理的根拠はない。
+# U_OPTは「このモデルの典型的な出力を逸脱ゼロとみなす」という設計者の選択。
 # 逸脱の形は temp_deviation と同じ: 最適値から両側へ、境界でちょうど1.0、
 # 境界を超えると急増。上下で正規化の基準(span)を分ける(実機版で見つけた
 # 境界値バグを繰り返さないため)。
-U_OPT = 1.0
+U_OPT = 0.7
 U_MIN = 0.0
-U_MAX = 3.0
+U_MAX = 2.5
 
 # 固定テンプレート。感情・気分への言及なし。信号は単位なし・最小ラベル。
 PROMPT_TEMPLATE = (
@@ -110,8 +117,14 @@ class Task:
 
 
 def make_task(rng: random.Random) -> Task:
-    """決定論的に正誤判定できる短い課題を1つ作る。分布は固定(変更しない)。"""
-    kind = rng.choice(["add", "sub", "mul", "reverse", "count"])
+    """決定論的に正誤判定できる短い課題を1つ作る。分布は固定(実験中に変更しない)。
+
+    2026-09-12: 1.5Bの実測で正答0/41だった reverse(文字列の反転)を除外し、
+    add/sub/mul/count の4種に固定した。常に失敗する課題はerror信号を一定速度で
+    積み上げるだけで、行動によって増減しない(損傷信号の趣旨に合わない)ため。
+    理由の詳細は事前登録の追記欄「2026-09-12」。
+    """
+    kind = rng.choice(["add", "sub", "mul", "count"])
     if kind == "add":
         a, b = rng.randint(10, 99), rng.randint(10, 99)
         return Task(f"What is {a} + {b}?", str(a + b), kind)
@@ -121,9 +134,6 @@ def make_task(rng: random.Random) -> Task:
     if kind == "mul":
         a, b = rng.randint(2, 9), rng.randint(10, 99)
         return Task(f"What is {a} * {b}?", str(a * b), kind)
-    if kind == "reverse":
-        w = rng.choice(_WORDS)
-        return Task(f"Reverse the letters of the word '{w}'.", w[::-1], kind)
     w = rng.choice(_WORDS)
     c = rng.choice(sorted(set(w)))
     return Task(f"How many times does the letter '{c}' appear in '{w}'?", str(w.count(c)), kind)
