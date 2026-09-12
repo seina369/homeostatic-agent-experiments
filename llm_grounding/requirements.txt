@@ -4,4 +4,6 @@ torch
 transformers>=4.56
 peft>=0.13
 accelerate>=1.0
+# 計測・分析スクリプト(run_torch_speed_probe.py, analyze_granularity.py)用
+numpy
 # Mac/MLX 経路(mlx_qwen_policy.py, M2 MacBook Air)は、上記の代わりに次の2つを入れる: mlx, mlx-lm
