@@ -6,5 +6,4 @@ venv/
 *.egg-info/
 
 # internal notes not for public repo
-引き継ぎメモ.md
 .write_test
