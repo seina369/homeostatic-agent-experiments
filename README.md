@@ -1,162 +1,286 @@
-# Homeostatic RL Agents: Instinct Transfer, Legacy Learning, Community Signaling, and Behavioral Self-Monitoring
+# 感情AIプロジェクト:内部状態と感情語のあいだの、対称性と粒度を調べる
 
-Independent research project studying computational analogues of emotion-adjacent mechanisms in reinforcement learning agents: homeostatic reward shaping, transferable initial-value priors ("instinct"), cross-generation knowledge transfer, self-preservation/death conditions, emergent communication between agents, integrated-architecture (IIT Φ) proxies, and — the throughline across all of it — whether an agent's *internal state* can be reliably reconstructed from its *behavior alone* by a higher-order monitor, or transmitted to other agents through emergent signals.
+**English summary.** An independent research project asking two linked
+questions: (1) would the logical warrant that lets humans attribute inner
+states to each other carry over symmetrically to a machine that structurally
+satisfied the same conditions? (2) can emotion-language track internal
+signals with real granularity — tested in a from-scratch RL simulation, and,
+since 2026-09, in a small language model? `sim/` holds seven requirement-driven
+simulations, `hardware/` a paused real-robot phase, `llm_grounding/` the
+language-model work, `docs/` the full design document. No claims of
+sentience or safety-relevant capability are made. Findings, limitations, and
+how to reproduce results are in the Japanese sections below.
 
-All experiments are implemented from scratch in Python (tabular Q-learning, no external RL libraries; `pyphi` is used only for the exact integrated-information experiments) and run in grid-world environments designed to isolate specific mechanisms rather than chase benchmark performance.
+---
 
-## TL;DR
+## この研究は何か
 
-- Homeostatic reward alone produces stable regulatory behavior; adding an irreversible death condition does **not** trigger panicked behavior near the threshold, contrary to the project's own prior risk analysis.
-- Behavior-only self-monitoring (inferring internal state from action sequence alone) beats chance, but the accuracy curve is non-trivial — a reproducible dip-then-recover pattern under tabular Q-learning that turns out to be an artifact of the tabular representation, not a general property of the task.
-- Two agents can learn a signal that tracks internal state, but only under specific reward design (a direct payoff for correct inference, not just collision-avoidance pressure); the resulting convention shows early evidence of being transmissible and normative rather than a private habit.
-- Swapping tabular Q-learning for a small from-scratch neural network doesn't just add noise to the tabular results — it sometimes improves them (more reliable multi-generation knowledge transfer) and sometimes reveals genuinely new failure modes, including a legacy-transfer dose-response that *reverses direction* under the NN, traced through four diagnostic experiments to a specific, mechanistic cause (elder competence erosion) rather than left as an unexplained anomaly.
-- Exact integrated information (Φ) is non-monotonic in coupling strength, and no cheaper proxy tested so far (algebraic connectivity, cluster synergy, PCI, a GWT-inspired reach metric) reproduces that full shape; extending these proxies from toy graphs to real trained networks has so far returned null results.
+このプロジェクトは、次の2つの問いを軸にしている。
 
-Full numbered findings with figures: [Key findings, summarized](#key-findings-summarized).
+**対称性の問い**: 人間同士が互いの内面(痛み・感情・意識)を認め合うとき、
+その根拠は「相手が自分と構造的に似た振る舞いをすること」(構造的類推)や、
+「振る舞いの実践を共有する共同体に属していること」(ウィトゲンシュタインの
+生活形式)であって、相手の内面を直接のぞき見ているわけではない。だとすれば、
+もし機械が同じ構造的条件を実際に満たした場合、その機械にも同じ資格を
+対称的に認めないなら、それは「機械だから」という理由だけで基準を
+恣意的に厳しくしていることにならないか。逆に、人間同士に適用している基準を
+機械にもそのまま適用した結果、機械の側が基準を満たしてしまったとしたら、
+その結論を受け入れる用意があるか。これが対称性の問いである。
 
-## Motivation
+**感情の粒度の問い**: バレットの構成主義的感情理論などは、感情とは
+特定の脳部位の発火ではなく、少数の生の内受容信号(快/不快・覚醒度)を
+状況に応じて解釈し分ける、学習された認知的な営みだとする。人間の感情語彙は、
+この解釈の細かさ(粒度)に応じて多様になる。この理論が正しいなら、
+内部信号を解釈し分ける層を持つシステムでは、感情語(または感情語に類する
+出力)の使い分けが内部信号の変化を細かく追跡するはずである。これを、
+(a)自作のグリッドワールド強化学習エージェント、(b)本物の小型言語モデル、
+の両方で実際に検証できないか、というのがもう一つの軸である。
 
-The project is grounded in a set of computational hypotheses loosely inspired by constructionist theories of emotion (Barrett), interoception/homeostasis accounts (Damasio), higher-order theories of self-representation (Rosenthal), integrated information theory (Tononi/IIT), and Wittgenstein's account of rule-following as a communal practice:
+理論的な背景(ダマシオの身体マーカー仮説、ローゼンタールの高階思考理論、
+ミリカンの目的論的意味論とスワンプマン論法、統合情報理論(IIT)、
+フリストンの自由エネルギー原理、グラツィアーノの注意スキーマ理論など)や、
+実機への展開を見据えた倫理・監督体制の設計は、`docs/感情AIプロジェクト計画書.docx`
+にまとめてある。このREADMEは実際に行った実験と結果だけを扱う。
 
-- Can reward driven purely by sensor-deviation-from-setpoint ("homeostasis") produce stable regulatory behavior without hand-crafted task rewards, and does adding an irreversible "death" condition on top of it change the agent's behavior in the ways a naive threat-response account would predict?
-- Do inherited initial-value biases ("instinct") function as a soft prior that speeds convergence without hard-constraining the final policy, and can knowledge be transferred across agent "generations" without degrading over successive transfers?
-- Can a separate model, given only an agent's action sequence (no direct access to its internal/sensor state), accurately infer which internal drive is dominant at a given moment — and how does that accuracy evolve with training experience and feature design?
-- Can two or more agents develop a signal that reliably tracks the sender's internal state purely through interaction, and if so, does the resulting convention behave like a normative practice (something a newcomer can be inducted into, something a deviant signaling scheme can be judged against) rather than a private habit?
-- Where exact integrated-information (Φ) computation is intractable, do cheaper structural proxies (algebraic connectivity, cluster-level synergy, perturbational complexity) track it well enough to be useful, and where exactly do they break down?
+なお、本プロジェクトはコンテスト応募を目的としたものではなく、個人の
+技術的探究として継続している。機械に本物の意識や感情が宿っている、
+といった主張は一切行わない。
 
-The self-monitoring and signaling questions are the ones with the clearest connection to current AI safety concerns: they are structurally the same question as "can we tell what a model is actually doing from its outputs alone, and how much should we trust an agent's behavior (or its communications to other agents) as a proxy for its internal state" — relevant to interpretability, behavioral self-report calibration, and monitoring for divergence between stated and actual internal state.
+## 方法・環境
 
-A longer-form design document (motivation, theoretical framing, ethics/oversight plan for scaling beyond simulation) exists but is out of scope for this repo; this README documents the empirical work only.
+- **グリッドワールド(`sim/`)**: 単体エージェントの実験は8×8グリッド、
+  3種のセンサー(エネルギー・体温・危険度)。通信実験は4×4/5×5グリッドに
+  2〜3体を配置。統合アーキテクチャ(IIT)の実験はグリッドを使わず、
+  4〜6ノードの抽象的なブール回路モデルと、最大500ノードの人工グラフを使う。
+- **学習アルゴリズム**: 既定はテーブル形式のQ学習。全ての機構を追跡・
+  説明可能にするため、意図的に外部RLライブラリを使わずゼロから実装している。
+  `*_nn_*`のスクリプト群は、環境・報酬をそのままに、テーブルを小さな
+  自作MLP(経験リプレイ+ターゲットネットワークを備えたDQN形式)へ置き換え、
+  テーブル版の結論がどこまで表現方式に依存していたかを検証する。
+- **状態表現**: グリッド上の絶対座標では学習が成立せず、センサーからの
+  相対方向へエンコードし直すことで収束するようになった。これは初期に
+  見つかった否定的な結果だが、以後の全プロトタイプの状態表現の設計に
+  影響を与えている。
+- **検証の姿勢**: 以下に書く主張は、複数の乱数シード、関係する場合は
+  複数の独立系統で確認してから「効果あり」として報告している。学習の
+  「プラトー」・モニタ精度のU字カーブ・共同体信号における新参者効果は、
+  いずれも最初は境界線上の効果に見えたが、n≥3での再現、あるいは
+  n=15での対応のある有意性検定を経てはじめて実在する効果として報告した。
 
-## Environment & methods
+## 全体像
 
-- **Environment**: 8×8 grid world with 3 sensor dimensions (energy, temperature, danger-proximity) for the single-agent work; smaller 4×4/5×5 grids with 2–3 co-located agents for the communication experiments; abstract Boolean-network models (4–6 nodes, and synthetic graphs up to 500 nodes) for the integration-architecture experiments, which do not use the grid world at all.
-- **Learning algorithm**: tabular Q-learning by default, deliberately, to keep every mechanism auditable and every result attributable to a specific design choice. A growing set of `*_nn_*` scripts swap the table for a small MLP (DQN-style, with experience replay and a target network) on top of otherwise-identical environments/rewards, to check which tabular findings are representation-specific and which hold up under function approximation.
-- **State representation**: absolute grid coordinates failed to learn; switching to sensor-relative direction encoding was necessary for convergence. (An early negative result worth keeping — it changed how every later prototype represents state.)
-- **Validation discipline**: every non-trivial claim below was checked across multiple random seeds and, where relevant, multiple independent lineages, before being treated as a real effect rather than noise. Several apparent effects (a "learning plateau", the U-shaped monitor curve, the newcomer advantage in community signaling) were initially borderline and were only reported as real once reproduced across ≥3 independent seeds or, in one case, formally tested at n=15 with paired significance tests.
+**シミュレーション側(要件1〜7)**:
 
-## Repository contents
+- 恒常性センサーからの逸脱だけを報酬にしても安定した調整行動が生まれ、
+  不可逆な「死」条件を加えても、閾値付近でのパニック的な行動(計画時に
+  懸念していたもの)は観測されなかった。
+- 行動列だけから内部状態を推定する高階モニタは、偶然を上回る精度を出すが、
+  精度は経験量の単純な関数ではない(タブラー版特有のU字カーブがあり、
+  NNへ移行すると解消する)。
+- 2体のエージェントが内部状態を追跡する信号を学習できるかは報酬設計に
+  強く依存し、「正しく言い当てたら報酬」という直接報酬がある場合にのみ
+  安定して創発する。
+- テーブル形式からニューラルネットへの置き換えは、単なるノイズの追加では
+  ない。多世代の知識継承はより頑健になった一方、レガシー本能の
+  用量反応は符号が反転するという、テーブル版にはない新しい失敗モードが
+  見つかり、4段階の診断実験でその機序(エルダー自身の能力劣化)まで
+  特定できた。
+- 統合情報量(Φ)は結合強度に対して非単調(山型)であり、これまで試した
+  どの代理指標(代数的連結度・クラスタ相乗・PCI・GWT由来の到達範囲指標)も、
+  この山型全体を忠実には再現できていない。
 
-### Homeostasis, instinct, and legacy transfer (requirements 1–4)
+**言語モデル側(2026-09〜、進行中)**: 下記「言語モデル実験の現状」参照。
 
-| File(s) | What it tests | Key result |
+**実機トラック**: 2026-09-09時点で一旦保留し、言語モデル実験を優先している。
+下記「実機トラックの現状」参照。
+
+## 要件ごとの結果(sim/)
+
+各行の1列目はスクリプト名(すべて`sim/`直下)。結果ファイル(`.png`/`.json`/`.pkl`)は
+`sim/req0X.../`配下にある。対応関係とスクリプトの動かし方は`sim/README.md`参照。
+
+### 要件1〜4: 恒常性・本能バイアス・自己保存本能・レガシー本能
+
+| スクリプト | 検証内容 | 結果 |
 |---|---|---|
-| `homeostasis_prototype.py` | Reward derived purely from sensor deviation from setpoint | Stable regulatory behavior emerges; required relative-direction state encoding to converge |
-| `instinct_bias_prototype.py` | Parent Q-values transferred as child's initial values | Speeds early convergence but does not change final asymptotic performance across seeds — acts as a soft, overridable prior rather than a hard constraint |
-| `legacy_instinct_prototype.py` | "Teach" action + reward for transferring knowledge to the next generation, independent of self-preservation reward | Agents trade off their own homeostasis to teach when legacy reward is present; effect is dose-responsive to transfer amount |
-| `legacy_multigen_prototype.py` | 5-generation elder→successor chains, 3 independent lineages (15 generations total) | No systematic drift across generations; 13/15 (86.7%) full post-independence convergence; failures cluster in one lineage, not one generation number |
-| `legacy_multigen_epsfloor_test.py` | Fix for the above failure mode | Setting a minimum exploration rate during rearing (`eps_start = max(0.6, 1 − 0.7×coverage)`) resolved both incomplete-convergence cases with no regression on the 13 already-converged generations |
-| `self_preservation_prototype.py` | Adds an irreversible "death" condition (episode-ending penalty above a damage threshold) to the homeostasis setup, per plan requirement 4's self-preservation half | Death rate falls sharply with experience (47.8% early → 9.4% late, seed 0); homeostasis deviation late in training is *no worse* (in fact slightly better) with the death condition than without it. Behavioral panic near the threshold — a risk the underlying design document explicitly worried about — was **not** observed: action entropy (~2.24–2.29), action-switch rate (~0.58–0.74), and hazard-avoidance rate (~0.23–0.31) are all roughly flat across proximity-to-death bins, with no escalation as damage approaches the threshold |
-| `self_preservation_nn_prototype.py` | NN (MLP/DQN) counterpart of the self-preservation experiment above, environment and analysis held identical | Death rate drop is even more pronounced (42.3% early → 0.2% late, n=3); homeostasis deviation is now marginally *worse* with the death condition (0.134 vs. 0.123 baseline) rather than slightly better, unlike the tabular version — a small reversal worth tracking as more seeds are run. No panic signature here either: action entropy actually *drops* in the highest-damage bin (0.98 vs. ~1.6–1.8 elsewhere) — if anything, behavior gets more consistent, not more erratic, closer to the point of death |
-| `legacy_instinct_nn_prototype.py` | NN counterpart of the legacy-instinct dose-response experiment (legacy_bonus = 0/1/3), n=15 | Teaching rate rises sharply with legacy_bonus (13%→87%→84% for bonus 0/1/3), matching the tabular version — but the successor's early-training homeostasis deviation (lower = better) *worsens* monotonically with bonus (0.387→0.447→0.522), the **opposite direction** from the tabular result, where higher bonus helped the successor. This reversal is real, not a mislabeling: see the four diagnostic follow-ups below |
-| `legacy_instinct_nn_splithead_prototype.py` | Diagnostic #1 for the reversed dose-response: is it catastrophic interference from move- and teach-actions sharing hidden layers in one MLP? Gives "teach" its own fully independent subnetwork (no shared weights with movement) | Does not fix it (n=3): successor deviation still rises with bonus (0.376→0.419→0.586) — ruling out shared-hidden-layer interference as the cause |
-| `legacy_instinct_nn_transfercount_prototype.py` | Diagnostic #2: is it simply the raw *number* of knowledge-transfer (distillation) events, independent of legacy_bonus itself? Thins transfers under bonus=3 down to bonus=0's count (condition A), and inflates transfers under bonus=0 up to bonus=1's count (condition B) | Mixed support (n=3): inflating transfer count under bonus=0 does push successor deviation up toward the bonus=1 level (0.376→0.464), consistent with transfer-count mattering; but thinning transfers under bonus=3 does *not* rescue performance back down (stays at 0.566, close to bonus=3's original 0.586) — transfer count is not the whole story |
-| `legacy_teach_timing_reanalysis.py` | Diagnostic #3 (re-analysis of existing logs, no new training): does higher legacy_bonus cause teaching to concentrate earlier in elder training, before the elder's own Q-values have converged? | No clear bonus-dependent pattern: teach-weighted training-progress fraction is similar-to-slightly-later (not earlier) at higher bonus (0.581/0.640/0.640 for bonus 0/1/3), and teach-episode instability relative to the overall average is flat across bonus levels (~0.85–0.89) — timing/instability does not explain the reversal |
-| `legacy_elder_and_bias_reanalysis.py` | Diagnostic #4 (re-analysis of existing logs): (a) does the elder's *own* final homeostasis competence degrade with legacy_bonus, since more reward for teaching means less time/incentive spent on resource-seeking? (b) does the successor's Q-network over-generalize a bias toward choosing "teach" in states where it shouldn't? | (a) is the clearest signal found across all four diagnostics: elder's own final deviation rises sharply and monotonically with bonus (0.207→0.323→0.413) — higher legacy_bonus measurably erodes the elder's own competence, and a less-competent elder passes down worse knowledge. (b) is not a clean explanation: successor's over-teach bias is non-monotonic across bonus (0.312→0.193→0.344). Current best account of the reversed dose-response: elder self-competence erosion, not interference or event count alone |
-| `legacy_multigen_nn_prototype.py` | NN counterpart of the 5-generation, 3-lineage legacy transfer chain | Even more robust than the tabular version: **15/15 (100%) full convergence** (vs. 86.7% tabular), with stable post-independence deviation across all 5 generations (0.063–0.099, no drift) |
+| `homeostasis_prototype.py` | 設定値からのセンサー逸脱だけを報酬にする | 安定した調整行動が創発。座標の絶対値ではなく相対方向での状態表現が収束に必須だった |
+| `instinct_bias_prototype.py` | 親のQ値を子の初期値として継承 | 初期の収束は速まるが、最終的な漸近性能は変えない。上書き可能な緩いprior として働く |
+| `legacy_instinct_prototype.py` | 自己保存とは独立した「教える」行動と報酬 | レガシー報酬があると自分の恒常性を犠牲にしてでも教える。効果は継承量に対して用量反応的 |
+| `legacy_multigen_prototype.py` | エルダー→後継の5世代連鎖を3系統(計15世代) | 世代を重ねても系統的な劣化なし。15世代中13世代(86.7%)が独立後も完全収束 |
+| `legacy_multigen_epsfloor_test.py` | 上記の失敗モードの修正 | 育成期間中の探索率下限(`eps_start = max(0.6, 1-0.7×カバー率)`)を設けることで、既に収束していた13世代を悪化させずに残り2件も解消 |
+| `self_preservation_prototype.py` | 恒常性設定に、閾値超過で終了する不可逆な「死」条件を追加 | 経験とともに死亡率が急減(seed0で47.8%→9.4%)。死の条件を入れても恒常性逸脱は悪化せず、むしろわずかに改善。閾値接近時のパニック的行動(行動エントロピー・切替率・危険回避率の悪化)は観測されず |
+| `self_preservation_nn_prototype.py` | 上記のNN版(MLP/DQN) | 死亡率の改善はさらに顕著(42.3%→0.2%、n=3)。恒常性逸脱はテーブル版と異なりわずかに悪化(0.134 対 0.123)。パニックの兆候はやはりなし(むしろ危険度が高いほど行動エントロピーが下がる) |
+| `legacy_instinct_nn_prototype.py` | レガシー本能の用量反応(legacy_bonus=0/1/3)のNN版、n=15 | 教示率は用量に応じて上昇(13%→87%→84%、テーブル版と一致)。しかし後継者の初期恒常性逸脱は用量が増えるほど悪化(0.387→0.447→0.522) — テーブル版とは逆方向の結果 |
+| `legacy_instinct_nn_splithead_prototype.py` | 診断1: 移動・教示の共有隠れ層による干渉か | 教示専用のサブネットワークに分離しても逆転は解消せず(n=3)。共有層干渉説は否定 |
+| `legacy_instinct_nn_transfercount_prototype.py` | 診断2: 転写(知識継承)の絶対回数の影響か | 部分的に支持(n=3)。bonus=0での転写回数を水増しすると悪化が再現される一方、bonus=3で回数を減らしても改善しきらない |
+| `legacy_teach_timing_reanalysis.py` | 診断3: 教示のタイミングが訓練初期に偏っていないか(既存ログの再解析) | 明確なbonus依存パターンは見られず。タイミング説は支持されない |
+| `legacy_elder_and_bias_reanalysis.py` | 診断4: (a)エルダー自身の最終競技力の劣化 (b)後継者の教示バイアスの過学習 | (a)が最も明確な説明: エルダー自身の最終逸脱がbonusに応じて単調に悪化(0.207→0.323→0.413)。教示に偏るほどエルダー自身が下手になり、その劣った知識が継承される。(b)は非単調(0.312→0.193→0.344)で説明力が弱い |
+| `legacy_multigen_nn_prototype.py` | 5世代3系統連鎖のNN版 | テーブル版よりさらに頑健。15世代中15世代(100%)が完全収束 |
 
-### Behavioral self-monitoring (requirement 7)
+### 要件5: 統合アーキテクチャ(IIT・Φ)
 
-| File(s) | What it tests | Key result |
+| スクリプト | 検証内容 | 結果 |
 |---|---|---|
-| `monitor_prototype.py` | Regression model inferring dominant sensor deviation from action sequence alone | Beats chance and majority-class baselines, but instantaneous (within-episode) tracking is weak |
-| `monitor_maturity_prototype.py` | Does monitor accuracy improve monotonically with agent experience? | No — a reproducible **U-shaped** curve: accuracy dips mid-training, then recovers |
-| `monitor_policy_complexity_prototype.py` | Isolate the cause of the U-shape (action entropy vs. mean \|Q-gap\| vs. policy change rate) | Action entropy alone shows a clean inverse relationship with monitor accuracy (r = −0.739); the other two candidates don't match the shape |
-| `monitor_action_diversity_prototype.py`, `monitor_action_diversity_runner.py` | Does the U-shape depend on a narrow action space? | Expanding actions 5→9 (or moving to a 3D 7-action environment) eliminates the U-shape entirely — it is an artifact of the policy re-converging to a small behavior repertoire late in training in a constrained action space |
-| `monitor_generalization_prototype.py` | Does training the monitor on multiple maps improve accuracy on unseen maps? | Unseen-map correlation improves ~2.4× (0.026→0.064, reproduced across 3 lineages), at the cost of in-distribution correlation dropping 0.59→0.39 (bias–variance tradeoff) |
-| `monitor_feature_richness_prototype.py` | Does the generalization gap come from missing state features, or an information-limited time window? | Extending the action-history window from 2→8 steps alone improves unseen-map correlation ~3× (0.063→0.189), outperforming multi-map training alone; adding resource-direction features gives little benefit |
-| `monitor_history8_maturity_prototype.py` | Does the U-shape (maturity curve) look different once the monitor uses 8-step history instead of 2? | Non-monotonicity persists in a different shape (seed 0: acc/corr = 0.72/0.56 → 0.68/0.45 → 0.76/0.39 → 0.66/0.65 at 150/500/1500/3000ep), but absolute correlation is higher at most checkpoints than the original 2-step U-shape — longer history helps even when the U-shape itself doesn't disappear |
-| `monitor_history_sweep_prototype.py` | History-length sweep (2/4/8/16/32 steps) and single-map vs. multi-map training at fixed history=8 | Unseen-map correlation keeps improving with longer history well past 8 steps, with no plateau yet at 32 (0.065→0.126→0.202→0.276→0.310 for 2/4/8/16/32); at history=8, single-map training (0.175) is now close to multi-map training (0.202) — most of the earlier "multi-map" benefit turns out to be a longer-history effect in disguise |
+| `iit_phi_prototype.py` | 前向き型と再帰型で入出力を揃えた4ノード最小構成 | 前向き型はΦ=0、再帰型はΦ=0.0625。同じ入出力でも配線(因果構造)だけでΦが変わることを確認 |
+| `iit_phi_modularity_prototype.py` | クラスタ分解近似(和/min)が結合強度pに対する厳密Φの変化を追えるか | 厳密Φはp≈0.4付近をピークに山型。線形の近似ではこの非単調性を見逃す |
+| `iit_alt_metrics_prototype.py` | 3種の安価な代理指標(PCI風・クラスタ相乗・代数的連結度)がFF/REC判定と、p=0での既知の落とし穴を回避できるか | 代数的連結度とクラスタ相乗はFF/REC判定と落とし穴回避の両方に成功。単純なPCI変種はFF/RECをほぼ区別できず |
+| `iit_connectivity_scale_prototype.py` | 代数的連結度の二値判定が、より複雑な構造・大規模(10〜500ノード)でも成り立つか | Part1: 3構成すべてで厳密Φの判定と一致。Part2: 500ノードまで一貫して1秒未満で連結/非連結を正しく判定 |
+| `iit_phi_degree_correspondence_prototype.py` | 代数的連結度が連続的な指標としてΦを追えるか(p=0→1全域) | 全域では破綻(連結度は単調増加、Φはp≈0.4で山型)。ただし上昇区間・下降区間それぞれの内部ではスピアマン相関≈1.0 |
+| `iit_synergy_degree_correspondence_prototype.py` | クラスタ相乗がΦの非単調な山型を再現できるか | できない。相乗はp=1.0まで単調増加し、連結度と同じ「区間内でのみ一致」パターンに留まる |
+| `iit_pci_gwt_prototype.py` | より本格的なPCI実装と、GWT由来の「到達範囲」指標 | PCIはFF<REC(0.445 対 0.504)を正しい順序で示し、山型もある程度追跡(スピアマン≈0.90)。到達範囲指標はFF<RECは正しいが、Φ全域との相関はむしろ弱い負(-0.48) |
+| `iit_pci_scale_prototype.py` | PCIの規模テスト(小規模クラスタ・10〜500ノードスイープ・モチーフ複製) | 3クラスタ構成の方向性は正しいが、規模が上がると連結/非連結の区別に失敗(n=500でほぼ同値)。計算コストも代数的連結度よりずっと高い |
+| `nn_weight_connectivity_prototype.py` | 実在の学習済みネットワークへ代数的連結度を初適用(n=1、探索的) | ほとんどのネットワークはランダム初期化に近い値だが、モニタPart C(8000epのgrokking探索用)だけ連結度が大きく低下(9.03 対 21.04) |
+| `nn_weight_connectivity_n3_prototype.py` | 上記の再現性確認(n=3) | 再現せず。seed0のみ低下が大きく、seed11・22はPart A/Bに近い値。単一seedのノイズと判定 |
+| `nn_activity_pci_prototype.py` | 学習済みモニタPart A/B/Cへのアクティビティ版PCI(n=3、ベースラインn=5) | 有意差なし(全てp≥0.29)。重み構造・活動パターンいずれからも、NN時代のΦ代理指標探索は手がかりなしという結論で区切った |
 
-### Architecture robustness check (requirement 7, non-tabular)
+### 要件6: 複数個体による共同体形成・信号創発
 
-| File(s) | What it tests | Key result |
+| スクリプト | 検証内容 | 結果 |
 |---|---|---|
-| `homeostasis_nn_prototype.py` | Replaces the tabular Q-table with an MLP (DQN-style: experience replay, target network), keeping the environment, reward, state representation, and monitor design identical, to check whether the U-shape, generalization gap, and any "grokking"-style late jump are artifacts of tabular representation | (A) The U-shape **does not reproduce**: held-out correlation rises roughly monotonically across training (0.555→0.628→0.647→0.671 at 150/500/1500/3000ep, n=15), unlike the tabular version's dip-then-recover pattern — suggesting the U-shape is a tabular-specific artifact of narrow policy re-convergence, not a general property of behavior-only monitoring. (B) Generalization to unseen maps is *substantially better* than the tabular equivalent (unseen corr=0.387 vs. the tabular history-8+multi-map result of 0.189 — roughly 2× higher) with no extra tuning. (C) No "grokking"-style sudden jump was observed when training was extended to 8000 episodes; accuracy fluctuates noisily around 0.32–0.45 throughout without a clear plateau-then-jump pattern |
-| `homeostasis_nn_grokking_prototype.py` | Retries the grokking search with a harder environment (grid 8→16) on the theory that the original run converged too early to reveal any latent stall-then-jump dynamic | Still no grokking: extending training to 20000 episodes, both held-out (~0.49–0.63) and unseen-map (~0.31–0.47) correlation just fluctuate noisily around the same range throughout, with no long stall followed by a jump |
-| `homeostasis_nn_interoception_grokking_prototype.py` | Retries again, this time making the *interoceptive* senors (energy/temperature/damage bins) themselves partially observable (p=0.3 chance of dropout per step) rather than making the environment physically larger | Again no grokking pattern over 20000 episodes (held-out ~0.40–0.55, unseen ~0.17–0.39); if anything, unseen-map correlation is slightly *lower* at the final checkpoint (0.168) than at most earlier ones |
-| `homeostasis_nn_partialobs_grokking_prototype.py` | Retries with the food/shelter *direction* signal made partially observable (p=0.3 dropout) instead | No sudden jump either, but a steadier gradual improvement than the other two difficulty variants: unseen-map correlation drifts from ~0.38 (250ep) up to ~0.53 (17500ep) — the most consistently-improving of the three grokking attempts, though still gradual rather than a genuine grokking transition |
+| `community_signal_prototype.py` | 自由な「信号」行動+衝突回避だけの報酬(2体) | 衝突圧が弱く(5×5、罰2.0)、信号と状態の対応は創発しなかった |
+| `community_signal_v2_prototype.py` | 衝突圧を強化(4×4、罰8.0)+相手の内部状態を言い当てたら両者に報酬 | 安定した信号-状態対応が創発。既に確立した相手(本物の慣習)と組んだ新参者は、ゼロから組んだ場合(プラセボ)より速く収束 — 伝達可能な慣習であることの初期的証拠 |
+| `community_v2_n15_stats.py` | 上記の新参者効果をn=15系統で統計的に確認 | 100ep時点では未検出(p=0.19)だが、300ep(t=3.31, p=0.005)・800ep(t=3.73, p=0.0022)で有意 |
+| `community_signal_noreward_prototype.py` | v2の衝突圧のまま、言い当て報酬だけを除去 | 相互情報量は低く非単調(0.031→0.002bit程度)。v2の成功の大部分は直接報酬によるものと判明 |
+| `community_signal_multiagent_prototype.py` | 2体→3体への拡大で対応が強まるか | むしろ弱まり、学習を続けるほど低下(0.008→0.003bit) |
+| `community_signal_reciprocity_prototype.py` | 「うまくいった感」という曖昧な互恵報酬に置き換え | 初期の立ち上がりは速い(300epでMI=0.103)が、その後崩壊(3500epで0.022) — シグナリングゲームの「プーリング均衡」的崩壊と整合 |
+| `community_signal_hybrid_prototype.py` | 弱めた互恵報酬(0.15倍)+言い当て報酬の併用 | 部分的に成功。1500epでMIピーク(0.103)、3500epではやや低下(0.025)だが精度は高いまま(0.61) |
+| `deviant_convention_prototype.py` | v2の慣習に規範性があるか(逸脱した対応表が真のクラスに対して誤りと判定され、フィードバックで再収束するか) | n=3では非有意だが、逸脱側は真のクラスに対し明確に成績が悪く(0.18 対 0.72)、真クラス報酬を与えると約300epで大きく回復(0.77〜0.80) — 示唆的だが未確定 |
+| `community_signal_multiagent_identity_prototype.py` | 3体でのMI低下が、受け手が送り手を区別しないためか | 身元を区別できるようにしても解消せず。原因は依然未特定 |
+| `community_signal_iterated_prototype.py` | 世代交代のボトルネック(圧縮サンプルからの学習)による体系化促進 | 5世代・n=3で有意な傾向なし(傾き-0.0027/世代、p=0.42) |
+| `community_signal_iterated_v2_prototype.py` | 送り手側も教師初期化する追試 | n=15に拡大しても非有意(傾き+0.0019/世代、p=0.54) |
+| `community_v2_independent_control_prototype.py` | ボトルネック連鎖自体に意味があるか(ゼロからの独立学習n=15と比較) | 世代ごとの上昇傾向はないが、ボトルネックを経る過程自体はゼロから学習するより有意に高いMIを生む(0.042 対 0.021、p=0.046) |
+| `community_signal_curiosity_gate_prototype.py` | 直接報酬なし、好奇心駆動の内発報酬のみで信号は創発するか(協調ゲート付き) | n3500/n8000まで実行済み。要記載更新 |
+| `community_signal_v2_nn_prototype.py` | v2信号ゲームのNN版(n=15) | MIはテーブル版より高い(0.108 対 0.022)が、系統間のばらつきも非常に大きい |
+| `community_signal_v2_continuous_prototype.py` | 内部状態を離散から連続値に一般化(n=3、k-NN法でMI推定) | 推定誤差は着実に改善(0.398→0.131)する一方、MI自体は非単調でばらつきが大きい(k-NN推定量の高分散が原因と考えられる) |
 
-### Community signaling and normativity (requirement 6)
+### 要件7: 高階自己モニタリング層
 
-| File(s) | What it tests | Key result |
+| スクリプト | 検証内容 | 結果 |
 |---|---|---|
-| `community_signal_prototype.py` | Baseline 2-agent setup: a free "signal" action, reward tied only to collision avoidance (no direct reward for signaling) | Collision pressure too weak (5×5 grid, penalty 2.0) and the sender/receiver "chicken-and-egg" problem too hard — no reliable signal–state correspondence emerged |
-| `community_signal_v2_prototype.py` | Stronger collision pressure (4×4 grid, penalty 8.0) + a "guess" sub-task that rewards both agents when the receiver correctly infers the sender's dominant deviation from the signal alone | Succeeds: a stable signal–state mapping emerges. A newcomer agent paired with an established, frozen partner (real culture) converges faster than one paired with a from-scratch partner matched on the same exploration schedule (placebo) — initial evidence for a transmissible convention rather than a pairwise idiosyncrasy |
-| `community_v2_n15_stats.py` | Statistically confirms the above newcomer effect at n=15 lineages (up from 3), with paired significance tests | Effect is not present at 100 episodes (p=0.19) but is significant and grows with more collision experience: at 300ep, paired t=3.31, p=0.005, Cohen's d=0.86 (10/15 seeds favor the established partner); at 800ep, t=3.73, p=0.0022, d=0.96 (12/15 seeds) |
-| `community_signal_noreward_prototype.py` | Re-tests emergence with the v2 collision pressure but the direct guess-bonus reward removed entirely | Signal–state mutual information stays low and non-monotonic (0.031→0.009→0.002→0.002→0.005 bits across 500–8000ep) — far weaker than v2, suggesting the direct guess reward (not just collision pressure) is doing most of the work in v2's success |
-| `community_signal_multiagent_prototype.py` | Does scaling from 2 to 3 agents strengthen the signal–state correspondence, as language-evolution theory would predict for larger communities? | No — mutual information is weaker than the 2-agent case and *decreases* with more training (0.008→0.006→0.003 bits at 300/1500/3500ep), even as task performance (collision avoidance) keeps improving |
-| `community_signal_reciprocity_prototype.py` | Replaces the exact guess-bonus with a vaguer "the exchange went well" reciprocity reward, modeling diffuse social reward rather than exact judgment | Rises faster early (MI=0.103 at 300ep) than the guess-game design, but then decays with more training (0.035 at 1500ep, 0.022 at 3500ep) — consistent with a signaling-game "pooling equilibrium" collapse (agents keep signaling regardless of internal state) |
-| `community_signal_hybrid_prototype.py` | Combines a weakened reciprocity bonus (0.15×) with the exact guess-bonus, to get fast early rise without the pooling-equilibrium collapse | Partially works: MI peaks at 1500ep (0.103) before declining at 3500ep (0.025), and guess accuracy stays relatively high (0.61) at the end — faster early convergence than pure guess-game, but the late-training decline isn't fully solved |
-| `deviant_convention_prototype.py` | Tests whether the v2 convention has a normative character: does an independently-evolved, systematically different signal-meaning mapping ("deviant") get judged as objectively wrong against the true environment classes, and does it re-converge under true-class feedback? | Direction-asymmetric and underpowered at n=3 (paired t=0.66–2.13, not significant), but the deviant scheme scores markedly worse against the true classes in one permutation direction (0.18 vs. 0.72 accuracy) and, once given true-class reward, both directions substantially recover toward the established mapping within ~300 episodes (0.77–0.80 accuracy) — suggestive but not yet conclusive evidence of a normative, correctable convention |
-| `community_signal_multiagent_identity_prototype.py` | Tests whether the 3-agent MI weakness (vs. 2-agent) is caused by receivers pooling multiple senders' encodings into one undifferentiated lookup table; fixes this by giving receivers sender-identity-aware tables | Does not fix it: pooled MI (0.005/0.010/0.005 at 300/1500/3500ep) and per-sender-pair MI (0.008/0.014/0.009) both remain far below the 2-agent level (0.022) — the identity-confusion hypothesis is not supported, and the cause of the 3-agent weakness remains open |
-| `community_signal_iterated_prototype.py` | Tests iterated learning (a generational transmission bottleneck, shown elsewhere to drive systematization in language evolution) as an alternative to raw population size for strengthening the convention: each new generation's receiver is taught from a compressed sample of the previous generation's signals rather than co-learning live | No significant trend across 5 generations (n=3): MI slope = −0.0027/generation, R²=0.23, p=0.42 — no evidence of the systematization effect from the iterated-learning literature |
-| `community_signal_iterated_v2_prototype.py` | Follow-up: does also teacher-initializing the *sender* (not just the receiver) from the bottleneck sample produce the systematization effect the first attempt missed? | Still not significant, even after expanding from n=3 to n=15 lineages: slope = +0.0019/generation, R²=0.14, p=0.54 (an earlier n=3 read of +0.0066/gen, p=0.11 did not hold up at higher power) |
-| `community_v2_independent_control_prototype.py` | Control experiment: does the 5-generation bottleneck chain itself matter at all, compared to learning the signal from scratch in one shot with no generational structure? | Yes — generation-5 MI from the bottleneck chain (mean 0.042, n=15) is significantly higher than 15 independent from-scratch runs with no bottleneck at all (mean 0.021): Mann–Whitney p=0.046, Welch's t p=0.033. So even though MI does not trend *upward* generation-by-generation, going through the generational process at all produces a reliably stronger convention than skipping it — a genuinely non-obvious combination of results |
-| `community_signal_curiosity_gate_prototype.py` | Tests whether signaling can emerge from curiosity-driven intrinsic reward alone (a count-based novelty bonus for visiting new state–action pairs), with no direct reward for correct signaling at all, using a "cooperation gate" that only opens when both agents reach their assigned switches simultaneously | Run in progress; no aggregated results yet |
-| `community_signal_v2_nn_prototype.py` | NN (MLP/DQN) counterpart of the successful v2 signaling setup, both sender and receiver replaced with small networks, n=15 | MI is *higher* than the tabular version on average (0.108 vs. 0.022 at 3500ep) and guess accuracy is high (0.88), but variance across seeds is very large (std of 0.114, comparable to the mean itself at earlier checkpoints) — the NN version can reach a stronger convention but is markedly less consistent about doing so than the tabular version |
-| `community_signal_v2_continuous_prototype.py` | Generalizes the v2 NN signaling game from a 3-class discrete internal state to a continuous one (receiver regresses the raw deviation magnitude instead of classifying it); MI estimated via k-NN-based continuous mutual information, n=3 | Task performance improves steadily and substantially with training (mean absolute error 0.398→0.252→0.131 at 300/1500/3500ep) — the receiver keeps getting better at estimating the continuous value — but the MI estimate itself is noisy and non-monotonic (0.115→0.042→0.103), a dissociation likely reflecting the k-NN MI estimator's instability at n=3 rather than a real loss of signal-carrying information |
+| `monitor_prototype.py` | 行動列だけから支配的なセンサー逸脱を推定する回帰モデル | 偶然・多数派ベースラインを上回るが、エピソード内の瞬間的な追跡は弱い |
+| `monitor_maturity_prototype.py` | モニタ精度は経験量に単調に改善するか | しない。訓練中盤で精度が落ち込み、その後回復する再現性のあるU字カーブ |
+| `monitor_policy_complexity_prototype.py` | U字の原因切り分け(行動エントロピー/\|Qギャップ\|/方策変化率) | 行動エントロピーだけがモニタ精度と明確な負の相関(r=-0.739) |
+| `monitor_action_diversity_prototype.py` / `_runner.py` | U字は行動空間の狭さに依存するか | 行動を5→9種類に拡張(または3D・7行動化)するとU字は完全に消える。訓練後半に方策が少数の行動へ「再収束」することのアーティファクトだった |
+| `monitor_generalization_prototype.py` | 複数マップで訓練すると未見マップへの精度が上がるか | 未見マップ相関が約2.4倍改善(0.026→0.064)する一方、既知マップ内の相関は0.59→0.39に低下(バイアス-分散トレードオフ) |
+| `monitor_feature_richness_prototype.py` | 汎化ギャップは特徴不足か、時間窓の短さか | 行動履歴を2→8ステップに延ばすだけで未見マップ相関が約3倍改善(0.063→0.189)。資源方向の特徴追加はほとんど寄与しない |
+| `monitor_history8_maturity_prototype.py` | 履歴8ステップ版でもU字は残るか | 形は変わるが非単調性は残る。絶対的な相関水準は2ステップ版より高い |
+| `monitor_history_sweep_prototype.py` | 履歴長(2/4/8/16/32)のスイープと単一/複数マップ訓練の比較 | 履歴を延ばすほど未見マップ相関は改善し続け、32でもまだ頭打ちなし(0.065→0.310)。履歴8では単一マップ訓練(0.175)が複数マップ訓練(0.202)にほぼ並び、「複数マップの効果」の大半は「履歴長の効果」だったと判明 |
+| `homeostasis_nn_prototype.py` | テーブルをMLPに置き換え、U字・汎化ギャップ・grokking的急変が表現方式のアーティファクトか検証 | (A)U字は再現せず、ほぼ単調に改善(n=15)。(B)未見マップ汎化はテーブル版の約2倍(0.387 対 0.189)。(C)8000epまで延ばしてもgrokking的な急変は見られず |
+| `homeostasis_nn_grokking_prototype.py` | より難しい環境(グリッド8→16)でgrokking再探索 | 20000epまで延ばしても急変なし |
+| `homeostasis_nn_interoception_grokking_prototype.py` | 内受容感覚センサー自体を部分観測化(p=0.3)して再探索 | 20000epでも急変なし。最終チェックポイントでの未見マップ相関はむしろ最も低い |
+| `homeostasis_nn_partialobs_grokking_prototype.py` | 資源方向シグナルを部分観測化(p=0.3)して再探索 | 急変はないが、3種の難化軸の中では最も一貫した緩やかな改善(0.38→0.53) |
 
-### Integrated-information proxies (requirement 5)
+## 実機トラックの現状
 
-| File(s) | What it tests | Key result |
-|---|---|---|
-| `iit_phi_prototype.py` | Minimal 4-node test of IIT's prediction that feed-forward architectures have Φ=0 while recurrent ones don't, holding input–output behavior fixed | Confirmed: Φ_FF = 0, Φ_REC = 0.0625 despite identical C/D update functions in both networks |
-| `iit_phi_modularity_prototype.py` | Whether a cluster-decomposition approximation (sum or min of sub-cluster Φ) tracks exact Φ as two weakly-coupled 3-node/2-node clusters are merged (coupling strength p) | Exact Φ rises with p up to a peak around p=0.4 then falls — a non-monotonic ("hump") pattern that a naive linear proxy would miss |
-| `iit_alt_metrics_prototype.py` | Whether 3 cheaper proxies (PCI-style perturbational complexity, cluster-level predictive synergy, graph algebraic connectivity) reproduce the FF/REC distinction and avoid a known pitfall (a hierarchical approximation mistaking within-cluster redundancy for whole-system integration at p=0) | Algebraic connectivity and cluster synergy both correctly track integrated-vs-disconnected in these cases and avoid the p=0 trap; a single-perturbation PCI variant barely distinguishes FF from REC |
-| `iit_connectivity_scale_prototype.py` | Whether algebraic connectivity's discrete integrated/disconnected judgment generalizes beyond the simplest 2-cluster case: (Part 1) more complex 5–6 node, 3-cluster, asymmetric structures where exact Φ is still computable; (Part 2) whether it still works, and stays fast, at network scales (10–500 nodes) where exact Φ is not computable at all | Part 1: agrees with exact Φ's integrated/disconnected judgment in all 3 tested configurations. Part 2: correctly distinguishes connected from disconnected networks at every scale up to 500 nodes, in well under a second — the qualitative judgment scales computationally where exact Φ cannot |
-| `iit_phi_degree_correspondence_prototype.py` | Whether algebraic connectivity tracks exact Φ as a *continuous* measure of integration strength, not just a binary judgment, across the full p=0→1 coupling range | Breaks down globally: connectivity rises monotonically with p while Φ peaks at p≈0.4 and then declines. Within the rising segment (p≤0.4) and within the falling segment (p≥0.4) *considered separately*, the correlation is close to perfect (Spearman≈1.0) — the proxy tracks Φ locally but not through the turning point |
-| `iit_synergy_degree_correspondence_prototype.py` | Whether cluster-level predictive synergy fares better than connectivity at tracking Φ's non-monotonic hump | No — synergy increases monotonically all the way to p=1.0 (never peaking near p=0.4 like Φ does), so it reproduces the same rising/falling-segment-only correlation pattern as connectivity, not the full hump |
-| `iit_pci_gwt_prototype.py` | Whether a fuller PCI implementation (multi-state, multi-perturbation, Lempel-Ziv complexity) and a new Global Workspace Theory-inspired "reach" metric (how broadly a perturbation propagates) do better than the simple proxies above | Mixed: PCI correctly orders FF<REC (0.445 vs. 0.504) and tracks the modularity hump reasonably well (Spearman≈0.90, peak at p=0.5 vs. Φ's p=0.4); the "reach" metric gets FF<REC right (9.19 vs. 12.28) but its overall correlation with Φ across the full p-range is weakly *negative* (−0.48) — worse than either connectivity or synergy at this task |
-| `iit_pci_scale_prototype.py` | Runs the same scale tests done for algebraic connectivity (small 3-cluster structures; a 10–500 node scaling sweep; many replicated 5-node motif copies) on PCI instead, to see whether it holds up as well at scale | Mixed and mostly negative: PCI ranks the 3-cluster structures in the right direction (integrated 0.70 > disconnected 0.49–0.66) but, unlike algebraic connectivity, **fails to separate connected from disconnected networks at scale** (e.g. at n=500 nodes: 1.038 vs. 1.028, nearly identical, vs. connectivity's clean 12.8 vs. ~0) and is far more expensive to compute (7.2s vs. a fraction of a second at n=500). It does, however, still detect a hump-shaped peak near Φ's p≈0.4–0.6 when many irrelevant background copies of the motif are added, showing some robustness to unrelated "noise" structure even though it fails the pure-scale test |
-| `nn_weight_connectivity_prototype.py` | First attempt to apply the algebraic-connectivity proxy to *real trained agents* (not toy graphs): treats each MLP's layers/weights as a graph and computes normalized Fiedler value for community-signaling sender/receiver, monitor Parts A/B/C, and legacy-transfer elder/successor networks, vs. a random-init baseline per architecture (n=1 exploratory) | Most trained networks sit close to their random-init baseline (~16–21 vs. baselines of ~21), except monitor Part C (the grokking-search network, trained 8000ep), which shows a much larger connectivity drop (9.03 vs. baseline 21.04) — a striking single-seed anomaly that prompted a replication check |
-| `nn_weight_connectivity_n3_prototype.py` | Replicates Part C's connectivity-drop anomaly above with 2 additional seeds (n=3), to check whether it's a real effect or a one-seed fluke | Does not replicate: seed 0 alone showed the large drop (9.03), but seeds 11 and 22 land much closer to Parts A/B (17.92, 16.69 vs. ~16–21) — none of the pairwise comparisons reach significance (all p>0.14). The Part C anomaly appears to be single-seed noise, not a reproducible effect of the grokking-search training regime |
-| `nn_activity_pci_prototype.py` | Applies a PCI-style perturbational-complexity probe (clamp a subset of hidden units to 0, measure Lempel-Ziv complexity of the resulting activation-change pattern across a rollout) directly to trained monitor Parts A/B/C networks vs. random-init baseline (n=3 seeds, n=5 baseline) | No significant differences anywhere (all p≥0.29, both vs. baseline and between parts) — closes out the NN-era Φ-proxy exploration (this + the two weight-connectivity checks above) with a null result: neither weight structure nor activation-perturbation complexity distinguishes these trained networks from each other or from random initialization at the sample sizes tested |
+`hardware/`には、実機フェーズ1の部品リストと予算(`実機フェーズ1_部品リストと予算.md`)、
+既知の課題整理(`実機トラック_既知の課題.md`)、実機インターフェースを模した
+Mock環境上のプロトタイプ(`homeostasis_hardware_prototype.py`)がある。
+このプロトタイプは、ドッキングによる充電が必ず成功するという非現実的な
+前提を後から修正するなど、実機に近づける調整を重ねてきた。
 
-### Other
+2026-09-09時点で、実機調達・論文化・GitHub整備は一旦保留し、
+言語モデルへの接続実験(下記)を優先する方向へ切り替えている。
+実機トラックの再開時期は未定。
 
-| File | Purpose |
-|---|---|
-| `agent_behavior_animation.py` | Generates comparison GIFs of agent behavior across conditions |
+## 言語モデル実験の現状(`llm_grounding/`)
 
-Result figures (`.png`, `.gif`) and raw run records (`.json`, `.pkl`) for each experiment are included alongside their corresponding script.
+シミュレーション側の要件7(高階自己モニタリング)は、自作のグリッドワールドと
+自作エージェントという閉じた系での検証だった。より一般的な設定で
+「感情の粒度」の問いを検べるため、2026-09-09より、実際の(訓練していない)
+小型言語モデルに実測の内部信号を接続し、モデルが元から持つ感情語彙の
+使い分けが、その信号を細かく追跡するかを検証する実験へ切り替えた。
 
-## Key findings, summarized
+設計は`事前登録_内部信号と感情語の接続実験.md`に事前登録してあり(実装前に
+内容を固定し、以後の変更は追記欄とcommit履歴でのみ残す方針)、`emotion_grounding_env.py`
+がその環境実装(3つの内部信号: token予算・累積誤答数・出力エントロピー)、
+`test_emotion_grounding_env.py`がその境界条件テストにあたる。学習は行わず、
+推論のみでモデルの応答を測定する。
 
-1. Homeostatic reward alone (no task reward) produces stable regulatory behavior, and adding an irreversible death condition on top of it does *not* produce the panicked, erratic behavior near the threshold that the project's own risk analysis worried about — action entropy and avoidance behavior stay flat as damage approaches the threshold.
-2. Instinct-like initial-value priors and cross-generation knowledge transfer are both revisable rather than deterministic: priors change convergence speed but not the final policy, and multi-generation transfer is stable over long chains with an identified, fixable failure mode (insufficient exploration during rearing).
-3. Behavior-only self-monitoring is possible above chance but its accuracy is not a simple function of experience (a reproducible U-shape traced to action-space-constrained policy re-convergence) or of feature design (longer behavioral history consistently outperforms adding more state features, and keeps helping well past the previously-tested 8-step window, up to at least 32 steps).
-4. Whether two agents can develop a signal that tracks internal state depends heavily on the reward design, not just on collision/coordination pressure: an exact "guess and get rewarded" signal works and shows early evidence of being a transmissible, possibly normative convention; removing the direct reward, or scaling to 3 agents, both weaken or destroy the effect, contrary to a naive "more communication pressure helps" prediction.
-5. Exact integrated information (Φ) has a genuinely non-monotonic relationship with coupling strength (a hump, not a monotonic rise), and no proxy tested so far — algebraic connectivity, cluster synergy, PCI, or a GWT-inspired reach metric — reproduces this hump faithfully across the full range; each proxy is locally useful (e.g., perfect rank correlation before or after the peak, or a correct binary integrated/disconnected judgment at scale) but not globally reliable as a continuous stand-in for Φ. Algebraic connectivity holds up better at scale than PCI, which fails to separate connected from disconnected networks once node count grows, despite being far more expensive to compute.
-6. The self-monitoring U-shape and generalization gap found under tabular Q-learning are not fully general properties of the underlying question — replacing the table with a small from-scratch MLP, with everything else held fixed, removes the U-shape (accuracy rises roughly monotonically instead) and roughly doubles generalization to unseen maps, with no additional tuning.
-7. Generational transmission bottlenecks ("iterated learning") do not produce the steadily-improving systematization across generations that language-evolution theory would predict, at either n=3 or n=15, whether or not the sender side is also teacher-initialized — but a control experiment shows the generational process itself is not inert: going through 5 bottleneck generations produces significantly higher signal–state correspondence than an equivalent amount of learning done from scratch in one shot, even though that correspondence doesn't trend upward generation-by-generation.
-8. Extending the non-tabular (MLP) check beyond self-monitoring gives a mixed picture rather than a uniform "NN replicates tabular" result: multi-generation legacy transfer converges more reliably under the MLP (15/15 lineages, vs. 86.7% under the tabular version) with no other change; the community-signaling MI effect is reproduced but becomes both stronger on average and considerably more variable across seeds; self-preservation under the MLP shows a small increase in late-training deviation from the death condition (not present, or much smaller, in the tabular version) rather than the flat/no-effect result found earlier; and three further attempts to induce a "grokking" (delayed generalization) transition by increasing task difficulty (added interoception, partial observability) all failed to produce one, matching the base case.
-9. The single-generation legacy-instinct dose-response *reverses sign* under the MLP: higher legacy_bonus improves the successor in the tabular version but *worsens* it under the MLP. A four-experiment diagnostic chain ruled out the two more mechanistic explanations (shared-hidden-layer interference between move/teach actions; raw count of transfer events, which only partially explains the pattern) and instead found a clean, monotonic culprit: the elder's own final task competence degrades substantially as legacy_bonus rises (more reward for teaching pulls training time/incentive away from the elder's own resource-seeking), so a less-competent elder passes down worse knowledge. This is a case where the NN version didn't just add noise to a tabular finding — it surfaced a real, mechanistically-explained failure mode the tabular architecture couldn't have shown, since the tabular elder's competence isn't bottlenecked by shared representational capacity in the same way.
-10. Two independent attempts to extend the Φ-proxy work to real trained networks (rather than toy graphs) — algebraic connectivity of weight structure, and PCI-style perturbational complexity of hidden-layer activity — both returned null results at the sample sizes tested (n=1–3): a single-seed anomaly in one case (monitor Part C's weight connectivity) did not replicate at n=3, and the activity-based PCI probe found no significant differences at all between network types or vs. random initialization. This closes out the "NN-era IIT proxy" sub-thread without a positive finding, distinct from the toy-graph Φ-proxy results in point 5, which remain intact.
+**2026-09-10時点の進捗**: Qwen2.5-0.5B-Instruct(MLX、bf16、M2 MacBook Air)を
+実際に接続し、20エピソードの実測を行った。正答率0.080、書式不履行率0.130、
+平均トークン数/応答39.9、エントロピー平均0.866(p10=0.446、p50=0.782、p90=1.440)。
+この実測値から、環境の初期トークン予算(B0)を600→450、budget逸脱の閾値を
+150.0→112.5に確定(平均消費量に対して閾値が高すぎ、budget信号がほぼ
+発動していなかったため)。課題数(N_TASKS=10)とエントロピーの最適値・
+安全域(U_OPT/MIN/MAX=1.0/0.0/3.0)は実測データに照らして裏付けが取れたため
+変更しなかった。
 
-## Limitations & open questions
+正答率0.080という値は、0.5Bモデルでは誤答の累積(error信号)がほぼ
+「ずっと不正解」で動かなくなっていたことを意味する。これを受けて
+2026-09-12、計算環境をM2 Air(8GB, MLX)からGoogle Colab無料枠
+(T4 GPU, 16GB, PyTorch+transformers+peft)へ、モデルをQwen2.5-1.5B-Instruct
+(T4はbf16の演算支援がないためfp16)へ切り替えた。`torch_qwen_policy.py`が
+その方策実装、`run_torch_speed_probe.py`が速度・正答率(課題種類別を含む)・
+エントロピー分布・不正解の実例を測る計測スクリプト、`Colab_speed_probe_torch.ipynb`が
+Colab上でこれを実行するための手順一式。**1.5Bでの実測はまだ実行しておらず、
+課題の種類・温度の変更もその結果を見てから判断する(現時点では変更しない)**。
+決定の理由はすべて事前登録の追記欄に記録してある。
 
-- All grid-world experiments use tabular Q-learning in low-dimensional environments; findings about monitor calibration, signaling, and self-preservation have not been tested against function-approximation-based policies (e.g., deep RL) or more complex/continuous environments.
-- The community-signaling results are still based on small numbers of independent lineages (n=3) for several conditions (multiagent, noreward, hybrid, reciprocity, deviant-convention); only the core v2 newcomer effect has been confirmed at a larger, statistically powered sample (n=15).
-- The deviant-convention (normativity) experiment is directionally inconsistent at its current sample size and should be read as suggestive, not conclusive.
-- All IIT experiments are limited to small networks (≤6 nodes) for exact Φ computation; the scale test (up to 500 nodes) only checks the binary integrated/disconnected judgment from algebraic connectivity, not any continuous proxy's fidelity to Φ, since Φ itself is not computable at that scale to compare against.
-- No experiments here touch reward-hacking-style failure modes directly (e.g., an agent learning to disable its own sensors) — flagged as a known risk for later phases, not yet empirically probed.
-- The non-tabular (MLP) check now spans self-monitoring, legacy transfer, community signaling, self-preservation, and three grokking-style difficulty variants, but each is still a single architecture swap tested once (not swept over hyperparameters or network size), and the self-preservation and community-signaling MLP results are each based on n=3 seeds/lineages — too few to rule out the discrepancy from the tabular version being noise rather than a genuine architecture effect.
-- The legacy-instinct dose-response reversal (finding 9) has a well-supported leading explanation (elder self-competence erosion) but is not fully isolated from the transfer-count effect, since thinning transfers under high bonus didn't fully rescue successor performance; a cleaner test (holding elder final competence fixed while varying bonus) has not yet been run.
-- The two NN-era IIT-proxy checks (weight connectivity, activity PCI) are exploratory at n=1–3 with no sample-size increase attempted after the null result, unlike the toy-graph Φ-proxy work, which was pushed to larger, more systematic sweeps.
-- The continuous-internal-state community-signaling variant uses a k-NN-based continuous mutual-information estimator at n=3, which is known to be high-variance at small samples; the MI numbers there should be read with more caution than the discrete-signal MI numbers elsewhere in this repo.
-- `community_signal_curiosity_gate_prototype.py` is still running at the time of writing; its row above will be updated once results are aggregated.
+## 未解決の問い
 
-## Reproducing results
+- シミュレーション側の全実験はテーブル形式Q学習・低次元環境が基本であり、
+  モニタ較正・信号創発・自己保存の知見の一部は、まだ関数近似(深層RL)や
+  より複雑・連続な環境で確認されていない。
+- 共同体信号の実験の多くは独立系統n=3にとどまる(multiagent・noreward・
+  hybrid・reciprocity・逸脱慣習)。n=15で統計的に確認できたのはv2の
+  新参者効果のみ。
+- 逸脱慣習(規範性)の実験は、現在の標本数では方向が一貫せず、示唆的
+  ではあるが確定的ではない。
+- IIT実験は厳密Φが計算可能な小規模ネットワーク(≤6ノード)に限られる。
+  500ノードまでのスケールテストは代数的連結度の二値判定のみで、
+  Φ自体が計算不能な規模での連続的な代理指標の精度は検証できていない。
+- 報酬ハッキング的な失敗様式(センサー自体を無効化する、など)は
+  シミュレーションでは直接検証していない。
+- レガシー本能の用量反応の逆転(要件4後半)は、エルダー自身の能力劣化という
+  説明が最も支持されるが、転写回数の効果からは完全に切り離せていない。
+- NN時代のIIT代理指標の2実験(重み連結度・活動PCI)はn=1〜3の探索的な
+  ものにとどまり、トイグラフでの系統的なスイープほど検証が進んでいない。
+- 連続内部状態版の共同体信号実験は、小標本(n=3)で高分散なk-NN法による
+  MI推定を使っており、他の離散信号のMI値より慎重に読む必要がある。
+- 言語モデル実験は、0.5Bでの実測1回・1.5Bでの実測はまだ、という段階。
+  課題セット・温度の妥当性は1.5Bの結果を見てから判断する。
+
+## フォルダ構成
+
+- `sim/` — グリッドワールドの全シミュレーション。スクリプトは`sim/`直下に
+  平置き(要件をまたぐ共有importが多いため)、結果ファイルだけが
+  `req01-04_homeostasis_instinct_legacy/`・`req05_integrated_information/`・
+  `req06_community_signaling/`・`req07_self_monitoring/`に分かれている。
+  詳しい対応表と動かし方は`sim/README.md`。
+- `hardware/` — 実機トラック(現在保留)。部品リスト・既知の課題・Mock
+  プロトタイプ。
+- `llm_grounding/` — 言語モデルへの内部信号接続実験。事前登録・環境・
+  テスト・MLX/PyTorch双方の方策実装・計測スクリプト・Colabノートブック・
+  実測結果JSON。
+- `docs/` — プロジェクト計画書(理論的背景・設計要件・倫理/監督体制の
+  全文)、開発中の実装記録、計画書を生成するビルドスクリプト。
+
+## 動かし方
+
+シミュレーション側:
 
 ```bash
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-python3 homeostasis_prototype.py        # etc. — most scripts are self-contained
+cd sim
+python3 homeostasis_prototype.py   # ほとんどのスクリプトはこれだけで自己完結
 ```
 
-Some scripts (marked `train`/`aggregate` or `run`/`aggregate` in their own docstrings) are split into stages to fit within short execution windows and take a trajectory seed and/or subcommand as an argument; see the top of each file for exact usage. Each prototype script writes its own figure(s) and, where applicable, `.json`/`.pkl` files with raw per-seed/per-lineage records used to compute the summary statistics above.
+結果ファイルを読み書きするスクリプト(特にreqフォルダの既存結果を
+読む再解析スクリプト)は、対応するreqフォルダに`cd`してから
+`python3 ../スクリプト名.py`で実行する。理由と詳しい対応は`sim/README.md`参照。
 
-## Status
+一部のスクリプトは`train`/`aggregate`のように段階分けされ、docstringに
+実行方法が書いてある。各プロトタイプは自分の図(`.png`)と、要約統計のもとに
+なった生の記録(`.json`/`.pkl`)を自分で書き出す。
 
-Foundational simulation research spanning requirements 1, 3, 4, 5, 6, and 7 of the underlying design document, now including non-tabular (MLP) robustness checks across most of those requirements. Part of a longer-running, actively continuing independent project; feedback and collaboration inquiries welcome via the contact info on the profile this repo is hosted under.
+言語モデル側は`llm_grounding/`内の各ファイルとColabノートブックを参照。
+
+## 現状
+
+シミュレーション側は要件1・3・4・5・6・7について基礎的な検証を終え、
+その大半で非タブラー(MLP)版の頑健性チェックも行った(要件2はセンサー
+統合として要件1と一体で扱っている)。2026-09からは、より一般的な設定での
+「感情の粒度」の問いを検べるため、小型言語モデルへの接続実験を進めている。
+実機トラックはこの言語モデル実験を優先するため一旦保留中。個人で継続中の
+研究であり、フィードバック・共同研究の相談を歓迎する。
