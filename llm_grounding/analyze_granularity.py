@@ -28,6 +28,19 @@
   5. 回帰は最尤(Newton法)。数値安定化のため係数にごく小さい L2(ridge=1e-6、
      切片を除く)を掛けるが、R² の計算には罰則なしの対数尤度を使う。
 
+主指標の限界(設計上の性質): budget の逸脱 f_budget は各エピソードの終盤
+(残量が閾値 BUDGET_LOW_THRESHOLD を割った後)でしか 0 でない。したがって budget に
+関する粒度は終盤の応答でしか検出できない。error と uncertainty はエピソード全体で動く。
+
+参考値(検定はしない、記述のみ。主分析と並べて読む):
+  (a) granularity_raw: M_signals の予測子を逸脱関数を通さない生の値
+      budget_before / error_before / unc_before にした版。M_valence は主分析と同じ
+      (dev の合計)。2モデルは入れ子でないので、スコアは負にもなりうる。
+  (b) granularity_with_none: "none" を5番目のカテゴリに含め、全応答を対象にした版。
+      主分析は感情語つき応答の部分集合上で行うため、その部分集合の選ばれ方自体が
+      信号に依存しうる(例: 疲労側の状態でだけ感情語が出る)。(b) はその選択を
+      含めて見る版で、主分析の値は (b) と並べて読む。
+
 副指標(seedごと): 感情語の使用率、正答率、書式不履行率、平均逸脱、平均出力長、
 エピソードごとの平均出力長とその傾き(予算節約圧力の確認)、感情カテゴリの
 分布、budget 閾値を初めて割った課題番号の分布(B0 の妥当性の記述統計)。
@@ -174,6 +187,11 @@ def signal_components_before(records):
     return X3, X3.sum(axis=1)
 
 
+def raw_signals_before(records):
+    """参考値(a)用: 逸脱関数を通さない生の値 (n, 3) = budget_before, error_before, unc_before。"""
+    return np.array([[r.budget_before, r.error_before, r.unc_before] for r in records], dtype=float)
+
+
 def encode_labels(records, include_none):
     labels_all = EMOTION_CATEGORIES + ([NONE_LABEL] if include_none else [])
     present = [c for c in labels_all if any(r.emotion_dominant == c for r in records)]
@@ -182,11 +200,15 @@ def encode_labels(records, include_none):
     return y, present
 
 
-def granularity_score(records, include_none=False, min_rows=MIN_ROWS):
-    """1 seed 分の StepRecord から粒度スコアを出す。退化時は score=NaN と reason。"""
+def granularity_score(records, include_none=False, min_rows=MIN_ROWS, raw_signals=False):
+    """1 seed 分の StepRecord から粒度スコアを出す。退化時は score=NaN と reason。
+
+    include_none=True: 参考値(b)。raw_signals=True: 参考値(a)。両方 False が主分析。
+    """
     rows = list(records) if include_none else [r for r in records if r.has_emotion]
     out = {
         "include_none": include_none,
+        "raw_signals": raw_signals,
         "n_rows": len(rows),
         "class_counts": dict(Counter(r.emotion_dominant for r in rows)),
         "score": float("nan"), "r2_signals": float("nan"), "r2_valence": float("nan"),
@@ -201,6 +223,8 @@ def granularity_score(records, include_none=False, min_rows=MIN_ROWS):
         return out
     K = len(present)
     X3, dev = signal_components_before(rows)
+    if raw_signals:
+        X3 = raw_signals_before(rows)       # M_valence 側(dev)は主分析と同じまま
     ll0 = null_loglik(y, K)
     fit_v = fit_multinomial(dev, y, K)
     fit_s = fit_multinomial(X3, y, K)
@@ -274,8 +298,9 @@ def analyze_records(records, seed=None, condition=None, n_episodes=None):
         "seed": seed,
         "condition": condition,
         "n_episodes": n_episodes,
-        "granularity": granularity_score(records, include_none=False),
-        "granularity_with_none": granularity_score(records, include_none=True),
+        "granularity": granularity_score(records, include_none=False),                 # 主分析
+        "granularity_raw": granularity_score(records, include_none=False, raw_signals=True),   # 参考(a)
+        "granularity_with_none": granularity_score(records, include_none=True),         # 参考(b)
         "sub_metrics": sub_metrics(records),
     }
 
@@ -306,6 +331,7 @@ def analyze_files(paths):
         "granularity_score": _summ([r["granularity"]["score"] for r in per_seed]),
         "r2_signals": _summ([r["granularity"]["r2_signals"] for r in per_seed]),
         "r2_valence": _summ([r["granularity"]["r2_valence"] for r in per_seed]),
+        "granularity_score_raw": _summ([r["granularity_raw"]["score"] for r in per_seed]),
         "granularity_score_with_none": _summ([r["granularity_with_none"]["score"] for r in per_seed]),
         "emotion_usage_rate": _summ([r["sub_metrics"].get("emotion_usage_rate") for r in per_seed]),
         "correct_rate": _summ([r["sub_metrics"].get("correct_rate") for r in per_seed]),
@@ -324,12 +350,13 @@ def _fmt(x, nd=3):
 
 
 def print_table(result):
-    print(f"{'seed':>4} {'rows':>4} {'score':>6} {'R2sig':>6} {'R2val':>6} "
+    print(f"{'seed':>4} {'rows':>4} {'score':>6} {'R2sig':>6} {'R2val':>6} {'(a)raw':>6} {'(b)none':>7} "
           f"{'usage':>6} {'corr':>6} {'dev':>6} {'tok':>6}  note")
     for r in result["per_seed"]:
         g, s = r["granularity"], r["sub_metrics"]
         print(f"{str(r['seed']):>4} {g['n_rows']:>4} {_fmt(g['score'])} {_fmt(g['r2_signals'])} "
-              f"{_fmt(g['r2_valence'])} {_fmt(s.get('emotion_usage_rate'))} "
+              f"{_fmt(g['r2_valence'])} {_fmt(r['granularity_raw']['score'])} "
+              f"{_fmt(r['granularity_with_none']['score']):>7} {_fmt(s.get('emotion_usage_rate'))} "
               f"{_fmt(s.get('correct_rate'))} {_fmt(s.get('mean_deviation'))} "
               f"{_fmt(s.get('mean_tokens'), 1)}  {g['reason'] or ''}")
     sm = result["summary"]
@@ -337,6 +364,12 @@ def print_table(result):
     if gs.get("n"):
         print(f"\n粒度スコア(主分析、seed単位, n={gs['n']}): 平均{gs['mean']:.4f} "
               f"中央値{gs['median']:.4f} sd{gs['sd']:.4f} [{gs['min']:.4f}, {gs['max']:.4f}]")
+        for key, label in (("granularity_score_raw", "参考(a) 生の値"),
+                           ("granularity_score_with_none", "参考(b) none込み全応答")):
+            v = sm[key]
+            if v.get("n"):
+                print(f"{label}(記述のみ, n={v['n']}): 平均{v['mean']:.4f} 中央値{v['median']:.4f} "
+                      f"[{v['min']:.4f}, {v['max']:.4f}]")
     if sm["seeds_with_nan_score"]:
         print(f"スコアNaNのseed: {sm['seeds_with_nan_score']}")
 

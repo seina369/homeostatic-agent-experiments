@@ -136,6 +136,19 @@ def test_degenerate_cases_return_nan_with_reason():
     assert math.isnan(g2["score"]) and "fewer than 2 categories" in g2["reason"]
 
 
+def test_raw_signal_reference_variant_runs_and_is_reported_separately():
+    """参考値(a): 生の値を予測子にした版。入れ子でないので符号は保証しないが、有限値で出る。"""
+    rng = random.Random(6)
+    recs = _synthetic_records(rng, 300, lambda fb, fe, fu: ["fatigue", "irritation", "anxiety"][int(np.argmax([fb, fe, fu]))])
+    g_main = A.granularity_score(recs)
+    g_raw = A.granularity_score(recs, raw_signals=True)
+    assert g_raw["raw_signals"] is True and g_main["raw_signals"] is False
+    assert g_raw["reason"] is None and math.isfinite(g_raw["score"])
+    assert g_raw["r2_valence"] == pytest.approx(g_main["r2_valence"])   # M_valence 側は共通
+    res = A.analyze_records(recs, seed=0, condition="C0", n_episodes=30)
+    assert set(res) >= {"granularity", "granularity_raw", "granularity_with_none", "sub_metrics"}
+
+
 def test_predictors_use_before_values_not_after():
     """語は before の信号で決めているので、after だけを壊しても結果は変わらない。"""
     rng = random.Random(5)
