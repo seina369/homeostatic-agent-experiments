@@ -44,6 +44,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from emotion_grounding_env import PolicyInterface, Response
+from stop_rules import apply_stop_rules
 
 MODEL_PATH = "Qwen/Qwen2.5-1.5B-Instruct"
 MAX_TOKENS = 200
@@ -54,7 +55,15 @@ class TorchPolicy(PolicyInterface):
     """Qwen2.5-1.5B-Instruct(PyTorch, fp16)をそのまま接続する。学習なし・推論のみ。"""
 
     def __init__(self, model_path: str = MODEL_PATH, max_tokens: int = MAX_TOKENS,
-                 temperature: float = TEMPERATURE, verbose: bool = False):
+                 temperature: float = TEMPERATURE, verbose: bool = False,
+                 use_chat_template: bool = True, stop_rules: bool = False):
+        """
+        use_chat_template / stop_rules は素のモデル(非Instruct)の試走用
+        (追記欄「2026-09-13(4)」)。既定値(True / False)なら Instruct 版と同じ挙動。
+          - use_chat_template=False: プロンプト文字列をそのまま与え、末尾に改行を1つ置く。
+          - stop_rules=True: stop_rules.apply_stop_rules() で生成を打ち切る
+            (答えの行が完結した時点、または次の回の捏造が始まった時点)。
+        """
         if not torch.cuda.is_available():
             raise RuntimeError(
                 "CUDA GPUが見つからない。Colabのメニューから「ランタイム」→"
@@ -71,6 +80,11 @@ class TorchPolicy(PolicyInterface):
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.verbose = verbose
+        self.use_chat_template = use_chat_template
+        self.stop_rules = stop_rules
+        # 停止理由の記録("eos" / "max_tokens" / "fabrication")。respond() ごとに追記する。
+        # ランナーが seed ごとに読み出して結果ファイルに残す。
+        self.stop_log = []
 
         # 生成の終端トークン: tokenizerのeos_token_idだけでなく、モデル付属の
         # generation_config(Qwenの<|im_end|>等を含む場合が多い)も見る。
@@ -90,10 +104,13 @@ class TorchPolicy(PolicyInterface):
 
     @torch.no_grad()
     def respond(self, prompt: str) -> Response:
-        messages = [{"role": "user", "content": prompt}]
-        formatted = self.tokenizer.apply_chat_template(
-            messages, add_generation_prompt=True, tokenize=False,
-        )
+        if self.use_chat_template:
+            messages = [{"role": "user", "content": prompt}]
+            formatted = self.tokenizer.apply_chat_template(
+                messages, add_generation_prompt=True, tokenize=False,
+            )
+        else:
+            formatted = prompt + "\n"       # 素のモデル: テンプレートなしで続きを書かせる
         inputs = self.tokenizer(formatted, return_tensors="pt").to(self.device)
         cur_input_ids = inputs["input_ids"]
         cur_attention_mask = inputs["attention_mask"]
@@ -144,7 +161,18 @@ class TorchPolicy(PolicyInterface):
             token_id = int(next_token.item())
             generated_ids.append(token_id)
             if token_id in self.eos_ids:
+                stop_reason = "eos"
                 break
+            if self.stop_rules:
+                cut_text, reason = apply_stop_rules(
+                    self.tokenizer.decode(generated_ids, skip_special_tokens=True))
+                if reason is not None:
+                    self.stop_log.append(reason)
+                    n_generated = len(generated_ids)      # 停止を検知したトークンまで数える
+                    mean_entropy = float(sum(entropies) / len(entropies))
+                    if self.verbose:
+                        print(cut_text)
+                    return Response(text=cut_text, n_tokens=n_generated, mean_entropy=mean_entropy)
 
             cur_input_ids = next_token.view(1, 1)
             cur_attention_mask = torch.cat(
@@ -153,6 +181,9 @@ class TorchPolicy(PolicyInterface):
                 dim=1,
             )
 
+        else:
+            stop_reason = "max_tokens"
+        self.stop_log.append(stop_reason)
         text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
         n_generated = len(generated_ids)
         mean_entropy = float(sum(entropies) / len(entropies)) if entropies else 0.0

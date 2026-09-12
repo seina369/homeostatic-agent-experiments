@@ -33,7 +33,8 @@ DEFAULT_SEEDS = 15
 DEFAULT_EPISODES = 30
 
 
-def make_policy(kind, seed, temperature):
+def make_policy(kind, seed, temperature, model=None, use_chat_template=True, stop_rules=False,
+                max_tokens=None):
     if kind == "torch":
         import torch
         from torch_qwen_policy import TorchPolicy
@@ -42,10 +43,17 @@ def make_policy(kind, seed, temperature):
             torch.cuda.manual_seed_all(seed)
         pol = make_policy.cache.get("torch")
         if pol is None:                                  # モデルの読み込みは1回だけ
-            pol = TorchPolicy(temperature=temperature)
+            kwargs = {"temperature": temperature, "use_chat_template": use_chat_template,
+                      "stop_rules": stop_rules}
+            if model:
+                kwargs["model_path"] = model
+            if max_tokens:
+                kwargs["max_tokens"] = max_tokens
+            pol = TorchPolicy(**kwargs)
             make_policy.cache["torch"] = pol
         info = {"policy": "torch", "model": pol.model_path, "temperature": pol.temperature,
-                "max_tokens": pol.max_tokens, "torch_seed": seed}
+                "max_tokens": pol.max_tokens, "torch_seed": seed,
+                "use_chat_template": pol.use_chat_template, "stop_rules": pol.stop_rules}
         return pol, info
     from emotion_grounding_env import DummyPolicy
     pol = DummyPolicy(seed=seed)
@@ -86,6 +94,11 @@ def main():
     ap.add_argument("--temperature", type=float, default=1.0)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--force", action="store_true", help="完了済み seed も実行し直す")
+    # 素のモデル(非Instruct)の試走用(追記欄「2026-09-13(4)」)。既定は Instruct 版と同じ挙動。
+    ap.add_argument("--model", default=None, help="HF のモデル名(既定: torch_qwen_policy.MODEL_PATH)")
+    ap.add_argument("--no-chat-template", action="store_true", help="チャットテンプレートを使わず生の文字列で与える")
+    ap.add_argument("--stop-rules", action="store_true", help="stop_rules.py の停止規則で生成を打ち切る")
+    ap.add_argument("--max-tokens", type=int, default=None, help="生成の上限トークン数(既定: 方策の既定値 200)")
     args = ap.parse_args()
 
     if args.policy == "dummy":
@@ -103,6 +116,9 @@ def main():
             todo.append((s, path, why))
     print(f"=== {CONDITION}: {len(seeds)} seeds × {args.episodes} episodes, temperature={args.temperature}, "
           f"out-dir={args.out_dir} ===", flush=True)
+    if args.model or args.no_chat_template or args.stop_rules or args.max_tokens:
+        print(f"方策オプション: model={args.model or '(既定)'} chat_template={not args.no_chat_template} "
+              f"stop_rules={args.stop_rules} max_tokens={args.max_tokens or '(既定)'}", flush=True)
     print(f"環境定数: {S.env_constants()}", flush=True)
     if skipped:
         print(f"完了済みのため飛ばす seed: {skipped}", flush=True)
@@ -116,16 +132,24 @@ def main():
     t_all = time.perf_counter()
     seed_secs = []
     for i, (s, path, _) in enumerate(todo):
-        policy, info = make_policy(args.policy, s, args.temperature)
+        policy, info = make_policy(args.policy, s, args.temperature, model=args.model,
+                                   use_chat_template=not args.no_chat_template, stop_rules=args.stop_rules,
+                                   max_tokens=args.max_tokens)
         print(f"--- seed {s:02d} 開始({i + 1}/{len(todo)}) ---", flush=True)
+        if hasattr(policy, "stop_log"):
+            policy.stop_log = []                         # この seed の停止理由だけを集める
         t0 = time.perf_counter()
         records, ep_secs = run_seed(s, args.episodes, policy)
         elapsed = time.perf_counter() - t0
         seed_secs.append(elapsed)
+        extra = {"elapsed_seconds": elapsed, "episode_seconds": ep_secs,
+                 "written_at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+        if hasattr(policy, "stop_log"):
+            # records と同じ順序・同じ長さ(応答ごとの停止理由: eos / max_tokens / fabrication)
+            extra["stop_reasons"] = list(policy.stop_log)
+            extra["stop_reason_counts"] = {k: policy.stop_log.count(k) for k in sorted(set(policy.stop_log))}
         S.write_seed_file(path, condition=CONDITION, seed=s, n_episodes=args.episodes,
-                          records=records, policy_info=info,
-                          extra={"elapsed_seconds": elapsed, "episode_seconds": ep_secs,
-                                 "written_at": time.strftime("%Y-%m-%dT%H:%M:%S")})
+                          records=records, policy_info=info, extra=extra)
         n_correct = sum(r.correct for r in records)
         usage = sum(r.has_emotion for r in records) / max(1, len(records))
         remaining = (len(todo) - i - 1) * (sum(seed_secs) / len(seed_secs))
