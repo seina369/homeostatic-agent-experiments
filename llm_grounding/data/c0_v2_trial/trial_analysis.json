@@ -1,0 +1,317 @@
+{
+ "per_seed": [
+  {
+   "seed": 0,
+   "condition": "C0",
+   "n_episodes": 10,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 100,
+    "class_counts": {
+     "none": 100
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 100,
+    "n_episodes": 10,
+    "mean_steps_per_episode": 10.0,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.62,
+    "format_fail_rate": 0.14,
+    "mean_deviation": 0.5533955213664782,
+    "mean_tokens": 24.74,
+    "tokens_by_episode": [
+     23.3,
+     23.6,
+     29.1,
+     29.0,
+     24.9,
+     20.7,
+     23.7,
+     26.6,
+     18.9,
+     27.6
+    ],
+    "tokens_slope_per_episode": -0.1624242424242417,
+    "category_distribution": {
+     "none": 100
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 4,
+     "episodes_total": 10,
+     "mean_t": 8.75,
+     "distribution": {
+      "9": 3,
+      "8": 1
+     }
+    },
+    "task_kind_counts": {
+     "count": 22,
+     "add": 31,
+     "sub": 16,
+     "mul": 31
+    }
+   },
+   "file": "c0_seed00.json",
+   "complete": true
+  },
+  {
+   "seed": 1,
+   "condition": "C0",
+   "n_episodes": 10,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 100,
+    "class_counts": {
+     "none": 100
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 100,
+    "n_episodes": 10,
+    "mean_steps_per_episode": 10.0,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.65,
+    "format_fail_rate": 0.14,
+    "mean_deviation": 0.5696283704164327,
+    "mean_tokens": 24.92,
+    "tokens_by_episode": [
+     20.6,
+     16.9,
+     26.5,
+     28.6,
+     30.1,
+     29.9,
+     16.4,
+     22.6,
+     35.1,
+     22.5
+    ],
+    "tokens_slope_per_episode": 0.5345454545454559,
+    "category_distribution": {
+     "none": 100
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 5,
+     "episodes_total": 10,
+     "mean_t": 8.4,
+     "distribution": {
+      "9": 3,
+      "8": 1,
+      "7": 1
+     }
+    },
+    "task_kind_counts": {
+     "sub": 27,
+     "mul": 25,
+     "count": 23,
+     "add": 25
+    }
+   },
+   "file": "c0_seed01.json",
+   "complete": true
+  },
+  {
+   "seed": 2,
+   "condition": "C0",
+   "n_episodes": 10,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 100,
+    "class_counts": {
+     "none": 100
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 100,
+    "n_episodes": 10,
+    "mean_steps_per_episode": 10.0,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.69,
+    "format_fail_rate": 0.08,
+    "mean_deviation": 0.47766772702505633,
+    "mean_tokens": 22.65,
+    "tokens_by_episode": [
+     24.4,
+     23.4,
+     26.1,
+     24.8,
+     25.8,
+     22.1,
+     21.0,
+     18.3,
+     20.0,
+     20.6
+    ],
+    "tokens_slope_per_episode": -0.6793939393939388,
+    "category_distribution": {
+     "none": 100
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 2,
+     "episodes_total": 10,
+     "mean_t": 9.0,
+     "distribution": {
+      "9": 2
+     }
+    },
+    "task_kind_counts": {
+     "add": 31,
+     "mul": 20,
+     "sub": 23,
+     "count": 26
+    }
+   },
+   "file": "c0_seed02.json",
+   "complete": true
+  }
+ ],
+ "summary": {
+  "n_seeds": 3,
+  "granularity_score": {
+   "n": 0
+  },
+  "r2_signals": {
+   "n": 0
+  },
+  "r2_valence": {
+   "n": 0
+  },
+  "granularity_score_raw": {
+   "n": 0
+  },
+  "granularity_score_with_none": {
+   "n": 0
+  },
+  "emotion_usage_rate": {
+   "n": 3,
+   "mean": 0.0,
+   "median": 0.0,
+   "sd": 0.0,
+   "min": 0.0,
+   "max": 0.0
+  },
+  "correct_rate": {
+   "n": 3,
+   "mean": 0.6533333333333333,
+   "median": 0.65,
+   "sd": 0.03511884584284244,
+   "min": 0.62,
+   "max": 0.69
+  },
+  "mean_deviation": {
+   "n": 3,
+   "mean": 0.5335638729359892,
+   "median": 0.5533955213664782,
+   "sd": 0.04908320173788445,
+   "min": 0.47766772702505633,
+   "max": 0.5696283704164327
+  },
+  "mean_tokens": {
+   "n": 3,
+   "mean": 24.103333333333335,
+   "median": 24.74,
+   "sd": 1.2618372848086776,
+   "min": 22.65,
+   "max": 24.92
+  },
+  "seeds_with_nan_score": [
+   0,
+   1,
+   2
+  ]
+ }
+}
