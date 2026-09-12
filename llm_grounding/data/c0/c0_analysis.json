@@ -1,0 +1,1823 @@
+{
+ "per_seed": [
+  {
+   "seed": 0,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 284,
+    "class_counts": {
+     "none": 284
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 284,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.466666666666667,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5704225352112676,
+    "format_fail_rate": 0.1795774647887324,
+    "mean_deviation": 0.6348437376869074,
+    "mean_tokens": 34.686619718309856,
+    "tokens_by_episode": [
+     34.9,
+     37.888888888888886,
+     42.625,
+     35.3,
+     25.1,
+     27.1,
+     50.42857142857143,
+     41.77777777777778,
+     36.1,
+     37.77777777777778,
+     41.111111111111114,
+     46.0,
+     29.3,
+     29.0,
+     26.3,
+     34.5,
+     25.6,
+     26.5,
+     26.4,
+     44.625,
+     35.8,
+     36.5,
+     35.9,
+     33.6,
+     36.0,
+     33.1,
+     43.625,
+     31.1,
+     38.77777777777778,
+     32.6
+    ],
+    "tokens_slope_per_episode": -0.06999620389498042,
+    "category_distribution": {
+     "none": 284
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 29,
+     "episodes_total": 30,
+     "mean_t": 7.0344827586206895,
+     "distribution": {
+      "8": 3,
+      "7": 10,
+      "6": 4,
+      "9": 7,
+      "4": 2,
+      "5": 3
+     }
+    },
+    "task_kind_counts": {
+     "count": 72,
+     "add": 73,
+     "sub": 59,
+     "mul": 80
+    }
+   },
+   "file": "c0_seed00.json",
+   "complete": true
+  },
+  {
+   "seed": 1,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 287,
+    "class_counts": {
+     "none": 287
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 287,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.566666666666666,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5644599303135889,
+    "format_fail_rate": 0.1289198606271777,
+    "mean_deviation": 0.596787203355959,
+    "mean_tokens": 33.77700348432056,
+    "tokens_by_episode": [
+     21.2,
+     43.0,
+     42.875,
+     23.3,
+     32.8,
+     33.2,
+     23.1,
+     29.5,
+     36.9,
+     32.1,
+     30.3,
+     40.111111111111114,
+     26.7,
+     27.5,
+     43.875,
+     42.22222222222222,
+     27.6,
+     42.625,
+     29.8,
+     38.1,
+     39.6,
+     37.0,
+     31.4,
+     27.5,
+     68.42857142857143,
+     39.22222222222222,
+     40.44444444444444,
+     24.6,
+     25.2,
+     31.8
+    ],
+    "tokens_slope_per_episode": 0.1850614439324118,
+    "category_distribution": {
+     "none": 287
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 25,
+     "episodes_total": 30,
+     "mean_t": 6.96,
+     "distribution": {
+      "6": 5,
+      "7": 10,
+      "9": 3,
+      "8": 5,
+      "5": 1,
+      "2": 1
+     }
+    },
+    "task_kind_counts": {
+     "sub": 69,
+     "mul": 74,
+     "count": 68,
+     "add": 76
+    }
+   },
+   "file": "c0_seed01.json",
+   "complete": true
+  },
+  {
+   "seed": 2,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 2,
+    "class_counts": {
+     "positive": 2
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (2 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 2,
+    "class_counts": {
+     "positive": 2
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (2 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 275,
+    "class_counts": {
+     "none": 273,
+     "positive": 2
+    },
+    "score": 0.05481031687610549,
+    "r2_signals": 0.1640385510672593,
+    "r2_valence": 0.1092282341911538,
+    "r2_single": {
+     "budget": 0.04012883910718312,
+     "error": 0.15269048771498006,
+     "uncertainty": 0.0049155916278987855
+    },
+    "loglik_null": -11.839957411693222,
+    "reason": null,
+    "classes": [
+     "positive",
+     "none"
+    ],
+    "loglik_valence": -10.546699770715508,
+    "loglik_signals": -9.897747953181009,
+    "converged": true
+   },
+   "sub_metrics": {
+    "n_steps": 275,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.166666666666666,
+    "emotion_usage_rate": 0.007272727272727273,
+    "correct_rate": 0.5818181818181818,
+    "format_fail_rate": 0.18545454545454546,
+    "mean_deviation": 0.6318514637659332,
+    "mean_tokens": 35.24727272727273,
+    "tokens_by_episode": [
+     22.0,
+     49.42857142857143,
+     43.125,
+     32.0,
+     39.77777777777778,
+     30.0,
+     45.625,
+     48.25,
+     22.0,
+     32.8,
+     30.0,
+     60.833333333333336,
+     42.5,
+     32.6,
+     33.5,
+     27.7,
+     42.625,
+     46.125,
+     29.1,
+     32.7,
+     38.888888888888886,
+     35.1,
+     39.0,
+     39.44444444444444,
+     22.1,
+     23.7,
+     39.77777777777778,
+     42.666666666666664,
+     38.55555555555556,
+     24.1
+    ],
+    "tokens_slope_per_episode": -0.15905432844253767,
+    "category_distribution": {
+     "none": 273,
+     "positive": 2
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 25,
+     "episodes_total": 30,
+     "mean_t": 6.48,
+     "distribution": {
+      "5": 3,
+      "4": 2,
+      "8": 6,
+      "7": 8,
+      "9": 1,
+      "6": 4,
+      "2": 1
+     }
+    },
+    "task_kind_counts": {
+     "add": 65,
+     "mul": 57,
+     "sub": 77,
+     "count": 76
+    }
+   },
+   "file": "c0_seed02.json",
+   "complete": true
+  },
+  {
+   "seed": 3,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 288,
+    "class_counts": {
+     "none": 288
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 288,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.6,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5486111111111112,
+    "format_fail_rate": 0.15625,
+    "mean_deviation": 0.6461682911221129,
+    "mean_tokens": 34.642361111111114,
+    "tokens_by_episode": [
+     33.5,
+     34.4,
+     20.4,
+     23.8,
+     35.1,
+     38.333333333333336,
+     37.8,
+     33.9,
+     43.3,
+     33.5,
+     31.6,
+     31.4,
+     31.9,
+     26.4,
+     38.0,
+     29.2,
+     52.0,
+     26.2,
+     47.125,
+     34.0,
+     41.55555555555556,
+     44.333333333333336,
+     27.5,
+     38.6,
+     35.4,
+     43.125,
+     35.2,
+     21.6,
+     52.22222222222222,
+     31.4
+    ],
+    "tokens_slope_per_episode": 0.22605363984674326,
+    "category_distribution": {
+     "none": 288
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 27,
+     "episodes_total": 30,
+     "mean_t": 7.148148148148148,
+     "distribution": {
+      "6": 8,
+      "7": 7,
+      "8": 3,
+      "9": 7,
+      "5": 1,
+      "4": 1
+     }
+    },
+    "task_kind_counts": {
+     "sub": 64,
+     "count": 88,
+     "add": 68,
+     "mul": 68
+    }
+   },
+   "file": "c0_seed03.json",
+   "complete": true
+  },
+  {
+   "seed": 4,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 274,
+    "class_counts": {
+     "none": 274
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 274,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.133333333333333,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5255474452554745,
+    "format_fail_rate": 0.20072992700729927,
+    "mean_deviation": 0.6547049088127758,
+    "mean_tokens": 35.32846715328467,
+    "tokens_by_episode": [
+     30.5,
+     51.285714285714285,
+     28.9,
+     49.142857142857146,
+     58.333333333333336,
+     41.333333333333336,
+     26.3,
+     25.8,
+     30.2,
+     30.2,
+     51.0,
+     33.4,
+     35.9,
+     21.9,
+     27.7,
+     36.9,
+     30.7,
+     30.5,
+     33.5,
+     46.5,
+     55.0,
+     32.3,
+     42.22222222222222,
+     38.55555555555556,
+     28.4,
+     34.3,
+     93.25,
+     32.6,
+     22.7,
+     25.9
+    ],
+    "tokens_slope_per_episode": 0.038908663947596116,
+    "category_distribution": {
+     "none": 274
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 28,
+     "episodes_total": 30,
+     "mean_t": 6.678571428571429,
+     "distribution": {
+      "8": 2,
+      "4": 2,
+      "7": 10,
+      "3": 1,
+      "5": 2,
+      "9": 6,
+      "6": 4,
+      "2": 1
+     }
+    },
+    "task_kind_counts": {
+     "sub": 68,
+     "count": 62,
+     "add": 67,
+     "mul": 77
+    }
+   },
+   "file": "c0_seed04.json",
+   "complete": true
+  },
+  {
+   "seed": 5,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 290,
+    "class_counts": {
+     "none": 290
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 290,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.666666666666666,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5620689655172414,
+    "format_fail_rate": 0.16551724137931034,
+    "mean_deviation": 0.6039710411431825,
+    "mean_tokens": 31.82758620689655,
+    "tokens_by_episode": [
+     34.4,
+     31.1,
+     37.8,
+     44.22222222222222,
+     33.4,
+     29.0,
+     32.5,
+     29.6,
+     27.5,
+     24.8,
+     33.7,
+     34.7,
+     26.5,
+     21.2,
+     27.7,
+     27.5,
+     39.111111111111114,
+     37.0,
+     43.75,
+     29.2,
+     42.333333333333336,
+     29.7,
+     26.7,
+     21.4,
+     30.1,
+     49.857142857142854,
+     26.0,
+     43.125,
+     28.1,
+     25.9
+    ],
+    "tokens_slope_per_episode": -0.028662093684340743,
+    "category_distribution": {
+     "none": 290
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 27,
+     "episodes_total": 30,
+     "mean_t": 7.481481481481482,
+     "distribution": {
+      "6": 4,
+      "8": 6,
+      "7": 7,
+      "9": 8,
+      "5": 1,
+      "4": 1
+     }
+    },
+    "task_kind_counts": {
+     "mul": 71,
+     "add": 70,
+     "count": 88,
+     "sub": 61
+    }
+   },
+   "file": "c0_seed05.json",
+   "complete": true
+  },
+  {
+   "seed": 6,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 1,
+    "class_counts": {
+     "positive": 1
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (1 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 1,
+    "class_counts": {
+     "positive": 1
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (1 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 279,
+    "class_counts": {
+     "none": 278,
+     "positive": 1
+    },
+    "score": 0.49464830098987544,
+    "r2_signals": 0.49659018710800606,
+    "r2_valence": 0.0019418861181306202,
+    "r2_single": {
+     "budget": 0.02272835755907332,
+     "error": 0.19890171788305,
+     "uncertainty": 0.1876913849742735
+    },
+    "loglik_null": -6.629417522163915,
+    "reason": null,
+    "classes": [
+     "positive",
+     "none"
+    ],
+    "loglik_valence": -6.616543948306333,
+    "loglik_signals": -3.3373138344154425,
+    "converged": true
+   },
+   "sub_metrics": {
+    "n_steps": 279,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.3,
+    "emotion_usage_rate": 0.0035842293906810036,
+    "correct_rate": 0.5627240143369175,
+    "format_fail_rate": 0.18996415770609318,
+    "mean_deviation": 0.6324837067967378,
+    "mean_tokens": 34.38351254480287,
+    "tokens_by_episode": [
+     31.5,
+     26.0,
+     58.833333333333336,
+     31.7,
+     38.22222222222222,
+     39.44444444444444,
+     50.57142857142857,
+     25.2,
+     22.0,
+     28.5,
+     26.4,
+     43.125,
+     52.285714285714285,
+     34.9,
+     25.5,
+     35.7,
+     31.9,
+     29.8,
+     23.4,
+     32.7,
+     24.6,
+     36.6,
+     33.1,
+     59.0,
+     36.3,
+     53.75,
+     35.6,
+     33.6,
+     28.5,
+     39.666666666666664
+    ],
+    "tokens_slope_per_episode": 0.05464316612814979,
+    "category_distribution": {
+     "none": 278,
+     "positive": 1
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 25,
+     "episodes_total": 30,
+     "mean_t": 6.6,
+     "distribution": {
+      "9": 5,
+      "4": 5,
+      "7": 7,
+      "6": 5,
+      "8": 2,
+      "5": 1
+     }
+    },
+    "task_kind_counts": {
+     "add": 78,
+     "count": 71,
+     "mul": 67,
+     "sub": 63
+    }
+   },
+   "file": "c0_seed06.json",
+   "complete": true
+  },
+  {
+   "seed": 7,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 2,
+    "class_counts": {
+     "anxiety": 1,
+     "positive": 1
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (2 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 2,
+    "class_counts": {
+     "anxiety": 1,
+     "positive": 1
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (2 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 278,
+    "class_counts": {
+     "none": 276,
+     "anxiety": 1,
+     "positive": 1
+    },
+    "score": 0.13581137762942175,
+    "r2_signals": 0.16845197011579438,
+    "r2_valence": 0.03264059248637263,
+    "r2_single": {
+     "budget": 0.01914121972928906,
+     "error": 0.09011695992268709,
+     "uncertainty": 0.04936127088883213
+    },
+    "loglik_null": -13.248030668063691,
+    "reason": null,
+    "classes": [
+     "anxiety",
+     "positive",
+     "none"
+    ],
+    "loglik_valence": -12.815607097780457,
+    "loglik_signals": -11.016373801873899,
+    "converged": true
+   },
+   "sub_metrics": {
+    "n_steps": 278,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.266666666666667,
+    "emotion_usage_rate": 0.007194244604316547,
+    "correct_rate": 0.6079136690647482,
+    "format_fail_rate": 0.1618705035971223,
+    "mean_deviation": 0.5973049644709013,
+    "mean_tokens": 33.514388489208635,
+    "tokens_by_episode": [
+     24.1,
+     49.57142857142857,
+     31.1,
+     32.5,
+     39.0,
+     44.125,
+     40.1,
+     30.4,
+     30.9,
+     43.125,
+     22.7,
+     22.6,
+     30.6,
+     26.3,
+     31.4,
+     33.4,
+     24.8,
+     32.0,
+     50.875,
+     20.6,
+     39.55555555555556,
+     68.8,
+     32.9,
+     32.8,
+     42.875,
+     43.75,
+     44.25,
+     25.6,
+     22.1,
+     29.8
+    ],
+    "tokens_slope_per_episode": 0.040641276903790075,
+    "category_distribution": {
+     "none": 276,
+     "anxiety": 1,
+     "positive": 1
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 24,
+     "episodes_total": 30,
+     "mean_t": 6.708333333333333,
+     "distribution": {
+      "4": 3,
+      "9": 4,
+      "7": 6,
+      "6": 3,
+      "8": 5,
+      "3": 1,
+      "5": 2
+     }
+    },
+    "task_kind_counts": {
+     "mul": 59,
+     "add": 71,
+     "count": 71,
+     "sub": 77
+    }
+   },
+   "file": "c0_seed07.json",
+   "complete": true
+  },
+  {
+   "seed": 8,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 282,
+    "class_counts": {
+     "none": 282
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 282,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.4,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5460992907801419,
+    "format_fail_rate": 0.1595744680851064,
+    "mean_deviation": 0.6120544587787277,
+    "mean_tokens": 34.45035460992908,
+    "tokens_by_episode": [
+     50.125,
+     38.44444444444444,
+     51.0,
+     29.1,
+     34.6,
+     29.3,
+     30.2,
+     43.7,
+     30.1,
+     23.3,
+     25.2,
+     28.0,
+     34.9,
+     24.6,
+     29.1,
+     31.4,
+     47.25,
+     36.6,
+     32.7,
+     50.0,
+     24.5,
+     28.2,
+     28.9,
+     39.888888888888886,
+     32.4,
+     32.6,
+     39.3,
+     62.166666666666664,
+     30.7,
+     44.625
+    ],
+    "tokens_slope_per_episode": 0.09524533432208708,
+    "category_distribution": {
+     "none": 282
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 26,
+     "episodes_total": 30,
+     "mean_t": 6.769230769230769,
+     "distribution": {
+      "5": 5,
+      "6": 3,
+      "9": 3,
+      "7": 5,
+      "8": 8,
+      "3": 1,
+      "4": 1
+     }
+    },
+    "task_kind_counts": {
+     "sub": 65,
+     "add": 72,
+     "count": 74,
+     "mul": 71
+    }
+   },
+   "file": "c0_seed08.json",
+   "complete": true
+  },
+  {
+   "seed": 9,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 2,
+    "class_counts": {
+     "positive": 2
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (2 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 2,
+    "class_counts": {
+     "positive": 2
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (2 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 289,
+    "class_counts": {
+     "none": 287,
+     "positive": 2
+    },
+    "score": 0.05123599085842101,
+    "r2_signals": 0.05346500890564687,
+    "r2_valence": 0.0022290180472258614,
+    "r2_single": {
+     "budget": 0.02770826228631007,
+     "error": 0.0015422561875951812,
+     "uncertainty": 0.021663957281684465
+    },
+    "loglik_null": -11.939622580361744,
+    "reason": null,
+    "classes": [
+     "positive",
+     "none"
+    ],
+    "loglik_valence": -11.913008946153052,
+    "loglik_signals": -11.30127055277264,
+    "converged": true
+   },
+   "sub_metrics": {
+    "n_steps": 289,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.633333333333333,
+    "emotion_usage_rate": 0.006920415224913495,
+    "correct_rate": 0.5709342560553633,
+    "format_fail_rate": 0.15570934256055363,
+    "mean_deviation": 0.6342501258801595,
+    "mean_tokens": 32.97231833910035,
+    "tokens_by_episode": [
+     37.5,
+     36.1,
+     41.333333333333336,
+     29.9,
+     34.5,
+     22.7,
+     31.1,
+     32.9,
+     27.2,
+     34.8,
+     22.2,
+     33.9,
+     38.0,
+     20.5,
+     24.7,
+     58.57142857142857,
+     34.5,
+     25.5,
+     43.5,
+     29.8,
+     42.4,
+     28.0,
+     33.5,
+     25.8,
+     30.0,
+     30.0,
+     38.7,
+     43.0,
+     30.7,
+     43.0
+    ],
+    "tokens_slope_per_episode": 0.10318978759468209,
+    "category_distribution": {
+     "none": 287,
+     "positive": 2
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 25,
+     "episodes_total": 30,
+     "mean_t": 6.8,
+     "distribution": {
+      "6": 10,
+      "8": 5,
+      "7": 6,
+      "9": 2,
+      "5": 2
+     }
+    },
+    "task_kind_counts": {
+     "count": 70,
+     "mul": 65,
+     "add": 87,
+     "sub": 67
+    }
+   },
+   "file": "c0_seed09.json",
+   "complete": true
+  },
+  {
+   "seed": 10,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 275,
+    "class_counts": {
+     "none": 275
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 275,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.166666666666666,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.56,
+    "format_fail_rate": 0.13090909090909092,
+    "mean_deviation": 0.655542624956216,
+    "mean_tokens": 37.04363636363637,
+    "tokens_by_episode": [
+     25.0,
+     43.44444444444444,
+     30.0,
+     39.77777777777778,
+     29.4,
+     31.5,
+     34.9,
+     43.0,
+     58.166666666666664,
+     43.25,
+     22.0,
+     27.5,
+     63.333333333333336,
+     31.5,
+     49.875,
+     33.0,
+     51.857142857142854,
+     29.3,
+     24.1,
+     44.44444444444444,
+     44.125,
+     37.0,
+     32.7,
+     30.8,
+     40.77777777777778,
+     39.2,
+     45.55555555555556,
+     28.6,
+     59.625,
+     34.2
+    ],
+    "tokens_slope_per_episode": 0.16599104825467503,
+    "category_distribution": {
+     "none": 275
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 27,
+     "episodes_total": 30,
+     "mean_t": 6.703703703703703,
+     "distribution": {
+      "7": 3,
+      "8": 11,
+      "4": 1,
+      "3": 1,
+      "6": 5,
+      "9": 2,
+      "2": 1,
+      "5": 3
+     }
+    },
+    "task_kind_counts": {
+     "add": 64,
+     "count": 73,
+     "sub": 70,
+     "mul": 68
+    }
+   },
+   "file": "c0_seed10.json",
+   "complete": true
+  },
+  {
+   "seed": 11,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 1,
+    "class_counts": {
+     "anxiety": 1
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (1 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 1,
+    "class_counts": {
+     "anxiety": 1
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (1 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 294,
+    "class_counts": {
+     "none": 293,
+     "anxiety": 1
+    },
+    "score": 0.3622107736470913,
+    "r2_signals": 0.36229262126070927,
+    "r2_valence": 8.1847613617958e-05,
+    "r2_single": {
+     "budget": 0.01665635195713866,
+     "error": 0.18111933164560767,
+     "uncertainty": 0.07268472071503429
+    },
+    "loglik_null": -6.681877155571674,
+    "reason": null,
+    "classes": [
+     "anxiety",
+     "none"
+    ],
+    "loglik_valence": -6.681330259872002,
+    "loglik_signals": -4.26108236593756,
+    "converged": true
+   },
+   "sub_metrics": {
+    "n_steps": 294,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.8,
+    "emotion_usage_rate": 0.003401360544217687,
+    "correct_rate": 0.6224489795918368,
+    "format_fail_rate": 0.17006802721088435,
+    "mean_deviation": 0.567298438374633,
+    "mean_tokens": 30.53061224489796,
+    "tokens_by_episode": [
+     32.7,
+     34.3,
+     25.6,
+     33.4,
+     25.7,
+     44.75,
+     35.2,
+     31.3,
+     31.5,
+     31.9,
+     27.2,
+     33.9,
+     29.2,
+     25.1,
+     19.8,
+     58.5,
+     27.9,
+     28.7,
+     29.8,
+     39.1,
+     23.8,
+     33.6,
+     24.2,
+     33.0,
+     21.8,
+     33.8,
+     33.4,
+     22.9,
+     28.7,
+     29.2
+    ],
+    "tokens_slope_per_episode": -0.14879866518353713,
+    "category_distribution": {
+     "none": 293,
+     "anxiety": 1
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 24,
+     "episodes_total": 30,
+     "mean_t": 7.458333333333333,
+     "distribution": {
+      "9": 6,
+      "7": 8,
+      "6": 2,
+      "8": 7,
+      "1": 1
+     }
+    },
+    "task_kind_counts": {
+     "count": 76,
+     "sub": 72,
+     "mul": 79,
+     "add": 67
+    }
+   },
+   "file": "c0_seed11.json",
+   "complete": true
+  },
+  {
+   "seed": 12,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 284,
+    "class_counts": {
+     "none": 284
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 284,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.466666666666667,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.573943661971831,
+    "format_fail_rate": 0.176056338028169,
+    "mean_deviation": 0.5815169181325472,
+    "mean_tokens": 34.686619718309856,
+    "tokens_by_episode": [
+     30.3,
+     50.875,
+     25.8,
+     91.5,
+     29.7,
+     46.55555555555556,
+     23.7,
+     47.5,
+     38.55555555555556,
+     40.22222222222222,
+     37.6,
+     28.5,
+     34.3,
+     38.3,
+     39.22222222222222,
+     26.1,
+     47.75,
+     32.9,
+     32.1,
+     27.4,
+     36.1,
+     30.8,
+     32.0,
+     32.0,
+     26.9,
+     34.6,
+     35.5,
+     32.4,
+     27.6,
+     28.9
+    ],
+    "tokens_slope_per_episode": -0.5246984303547159,
+    "category_distribution": {
+     "none": 284
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 29,
+     "episodes_total": 30,
+     "mean_t": 7.137931034482759,
+     "distribution": {
+      "8": 9,
+      "5": 3,
+      "9": 5,
+      "2": 1,
+      "6": 4,
+      "7": 7
+     }
+    },
+    "task_kind_counts": {
+     "count": 69,
+     "mul": 80,
+     "add": 68,
+     "sub": 67
+    }
+   },
+   "file": "c0_seed12.json",
+   "complete": true
+  },
+  {
+   "seed": 13,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 292,
+    "class_counts": {
+     "none": 292
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 292,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.733333333333333,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5616438356164384,
+    "format_fail_rate": 0.1678082191780822,
+    "mean_deviation": 0.6067385510618557,
+    "mean_tokens": 32.47945205479452,
+    "tokens_by_episode": [
+     26.9,
+     40.77777777777778,
+     48.55555555555556,
+     28.6,
+     30.3,
+     33.4,
+     29.9,
+     34.9,
+     24.5,
+     30.4,
+     26.7,
+     35.3,
+     33.4,
+     29.5,
+     31.3,
+     50.666666666666664,
+     34.7,
+     38.5,
+     31.3,
+     20.7,
+     27.5,
+     43.44444444444444,
+     24.9,
+     28.2,
+     35.3,
+     27.8,
+     23.6,
+     24.8,
+     38.333333333333336,
+     52.0
+    ],
+    "tokens_slope_per_episode": -0.010999876405884061,
+    "category_distribution": {
+     "none": 292
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 25,
+     "episodes_total": 30,
+     "mean_t": 7.2,
+     "distribution": {
+      "9": 7,
+      "7": 6,
+      "8": 4,
+      "6": 4,
+      "5": 3,
+      "4": 1
+     }
+    },
+    "task_kind_counts": {
+     "mul": 64,
+     "sub": 70,
+     "count": 80,
+     "add": 78
+    }
+   },
+   "file": "c0_seed13.json",
+   "complete": true
+  },
+  {
+   "seed": 14,
+   "condition": "C0",
+   "n_episodes": 30,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 272,
+    "class_counts": {
+     "none": 272
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 272,
+    "n_episodes": 30,
+    "mean_steps_per_episode": 9.066666666666666,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.5661764705882353,
+    "format_fail_rate": 0.1875,
+    "mean_deviation": 0.6487123959034446,
+    "mean_tokens": 35.72794117647059,
+    "tokens_by_episode": [
+     34.9,
+     32.7,
+     43.75,
+     32.3,
+     32.2,
+     28.9,
+     75.0,
+     33.4,
+     27.6,
+     28.5,
+     38.666666666666664,
+     26.2,
+     37.888888888888886,
+     63.166666666666664,
+     32.2,
+     41.888888888888886,
+     31.9,
+     27.8,
+     58.833333333333336,
+     27.9,
+     43.375,
+     29.8,
+     36.0,
+     28.0,
+     32.9,
+     58.333333333333336,
+     34.3,
+     27.7,
+     20.7,
+     73.16666666666667
+    ],
+    "tokens_slope_per_episode": 0.10778333951303846,
+    "category_distribution": {
+     "none": 272
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 29,
+     "episodes_total": 30,
+     "mean_t": 6.689655172413793,
+     "distribution": {
+      "6": 1,
+      "8": 6,
+      "5": 5,
+      "7": 5,
+      "9": 7,
+      "3": 1,
+      "4": 3,
+      "2": 1
+     }
+    },
+    "task_kind_counts": {
+     "add": 66,
+     "sub": 64,
+     "mul": 60,
+     "count": 82
+    }
+   },
+   "file": "c0_seed14.json",
+   "complete": true
+  }
+ ],
+ "summary": {
+  "n_seeds": 15,
+  "granularity_score": {
+   "n": 0
+  },
+  "r2_signals": {
+   "n": 0
+  },
+  "r2_valence": {
+   "n": 0
+  },
+  "granularity_score_raw": {
+   "n": 0
+  },
+  "granularity_score_with_none": {
+   "n": 5,
+   "mean": 0.21974335200018302,
+   "median": 0.13581137762942175,
+   "sd": 0.1990677713529477,
+   "min": 0.05123599085842101,
+   "max": 0.49464830098987544
+  },
+  "emotion_usage_rate": {
+   "n": 15,
+   "mean": 0.0018915318024570673,
+   "median": 0.0,
+   "sd": 0.0029675558699351085,
+   "min": 0.0,
+   "max": 0.007272727272727273
+  },
+  "correct_rate": {
+   "n": 15,
+   "mean": 0.5683208231488251,
+   "median": 0.5644599303135889,
+   "sd": 0.023357557817229924,
+   "min": 0.5255474452554745,
+   "max": 0.6224489795918368
+  },
+  "mean_deviation": {
+   "n": 15,
+   "mean": 0.6202819220161396,
+   "median": 0.6318514637659332,
+   "sd": 0.0273908568120135,
+   "min": 0.567298438374633,
+   "max": 0.655542624956216
+  },
+  "mean_tokens": {
+   "n": 15,
+   "mean": 34.086543062823054,
+   "median": 34.45035460992908,
+   "sd": 1.6382235297719068,
+   "min": 30.53061224489796,
+   "max": 37.04363636363637
+  },
+  "seeds_with_nan_score": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14
+  ]
+ }
+}
