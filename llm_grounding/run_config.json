@@ -7,9 +7,9 @@
   "eval_episodes": 1,
   "groups_per_update": 4,
   "G": 8,
-  "lr": 1e-5,
+  "lr": 1e-05,
   "beta_kl": 0.04,
-  "micro_batch": 0,
+  "micro_batch": 2,
   "episodes": 30,
   "run_tests": true,
   "extra_args": []

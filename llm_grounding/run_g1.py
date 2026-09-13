@@ -313,6 +313,9 @@ def main():
     ap.add_argument("--judge-only", action="store_true", help="既存の g1_seedNN.json から判定だけ出す")
     ap.add_argument("--force", action="store_true", help="完了済み seed も実行し直す")
     args = ap.parse_args()
+    for stream in (sys.stdout, sys.stderr):          # パイプ経由(Kaggle/Colab のログ)でも print を逐次流す
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(line_buffering=True)
     cfg = G1Config(model=args.model, G=args.G, lr=args.lr, beta_kl=args.beta_kl, updates=args.updates,
                    groups_per_update=args.groups_per_update, eval_episodes=args.eval_episodes,
                    max_new_tokens=args.max_new_tokens, temperature=args.temperature, lora_r=args.lora_r,
