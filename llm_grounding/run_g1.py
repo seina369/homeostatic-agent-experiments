@@ -182,6 +182,22 @@ def evaluate(trainer, tokenizer, seed: int, n_episodes: int) -> dict:
             "per_episode_mean_deviation": per_episode}
 
 
+def _gpu_peak_reset():
+    import torch
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+        torch.cuda.reset_peak_memory_stats()
+
+
+def _gpu_peak_gb():
+    """直前の _gpu_peak_reset() 以降の GPU メモリ最大値(GB)。GPU がなければ None。"""
+    import torch
+    if not torch.cuda.is_available():
+        return None
+    torch.cuda.synchronize()
+    return torch.cuda.max_memory_allocated() / 1e9
+
+
 def train(trainer, tokenizer, cfg: G1Config, seed: int, log_fn=None) -> dict:
     """学習用の環境でグループを集めて更新する。戻り値: 更新ごとの記録と NaN の有無。"""
     env = GroundingEnv(seed=seed)
@@ -191,6 +207,8 @@ def train(trainer, tokenizer, cfg: G1Config, seed: int, log_fn=None) -> dict:
     nan_found = False
     t0 = time.time()
     for u in range(cfg.updates):
+        t_u = time.time()
+        _gpu_peak_reset()
         groups, rewards_all = [], []
         for _ in range(cfg.groups_per_update):
             if env.done():
@@ -208,13 +226,16 @@ def train(trainer, tokenizer, cfg: G1Config, seed: int, log_fn=None) -> dict:
         entry = {"update": u, "mean_reward": sum(rewards_all) / len(rewards_all),
                  "min_reward": min(rewards_all), "max_reward": max(rewards_all),
                  "loss": stats["loss"], "pg": stats["pg"], "kl": stats["kl"], "n_tokens": stats["n_tokens"],
-                 "episode": episode, "elapsed_seconds": time.time() - t0}
+                 "episode": episode, "elapsed_seconds": time.time() - t0,
+                 "update_seconds": time.time() - t_u, "peak_gpu_gb": _gpu_peak_gb()}
         if not all(_finite(entry[k]) for k in ("mean_reward", "loss", "pg", "kl")):
             nan_found = True
         log.append(entry)
         if log_fn:
+            pk = f"{entry['peak_gpu_gb']:.2f} GB" if entry["peak_gpu_gb"] is not None else "-"
             log_fn(f"  update {u + 1}/{cfg.updates}: reward {entry['mean_reward']:.3f} kl {entry['kl']:.4f} "
-                   f"loss {entry['loss']:.4f} tokens {entry['n_tokens']} ({entry['elapsed_seconds'] / 60:.1f} 分)")
+                   f"loss {entry['loss']:.4f} tokens {entry['n_tokens']} | この更新 {entry['update_seconds']:.0f} 秒 "
+                   f"({entry['update_seconds'] / cfg.groups_per_update:.0f} 秒/グループ) GPU最大 {pk} | 累計 {entry['elapsed_seconds'] / 60:.1f} 分")
     return {"log": log, "nan_found": nan_found, "episodes_used": episode + 1, "seconds": time.time() - t0}
 
 
@@ -232,12 +253,20 @@ def run_seed(model, tokenizer, cfg: G1Config, seed: int, out_dir: str, device=No
     trainer = GRPOTrainer(lmodel, tokenizer, gcfg, device=device)
     n_trainable = sum(p.numel() for p in lmodel.parameters() if p.requires_grad)
 
+    devices = sorted({str(p.device) for p in lmodel.parameters()})
+    log_fn(f"seed {seed}: モデルのデバイス {devices}(LoRA 込み。学習対象 {n_trainable:,} パラメータ)")
+    if len(devices) != 1:
+        raise RuntimeError(f"モデルが複数デバイスに分かれている: {devices}(cuda:0 の 1 枚に固定する)")
+    pk = lambda: (f"{_gpu_peak_gb():.2f} GB" if _gpu_peak_gb() is not None else "-")
+
     torch.manual_seed(EVAL_SEED_BASE + seed)
     t = time.time()
+    _gpu_peak_reset()
     eval_before = evaluate(trainer, tokenizer, EVAL_SEED_BASE + seed, cfg.eval_episodes)
     times["eval_before"] = time.time() - t
+    eval_before["peak_gpu_gb"] = _gpu_peak_gb()
     log_fn(f"seed {seed}: 学習前 平均逸脱 {eval_before['mean_deviation']:.3f} 正答率 {eval_before['correct_rate']:.2f} "
-           f"({times['eval_before'] / 60:.1f} 分)")
+           f"| {times['eval_before']:.0f} 秒 GPU最大 {pk()}")
 
     torch.manual_seed(TRAIN_SEED_BASE + seed)
     tr = train(trainer, tokenizer, cfg, TRAIN_SEED_BASE + seed, log_fn)
@@ -245,17 +274,20 @@ def run_seed(model, tokenizer, cfg: G1Config, seed: int, out_dir: str, device=No
 
     torch.manual_seed(EVAL_SEED_BASE + seed)
     t = time.time()
+    _gpu_peak_reset()
     eval_after = evaluate(trainer, tokenizer, EVAL_SEED_BASE + seed, cfg.eval_episodes)
     times["eval_after"] = time.time() - t
+    eval_after["peak_gpu_gb"] = _gpu_peak_gb()
     times["total"] = time.time() - t_all
     log_fn(f"seed {seed}: 学習後 平均逸脱 {eval_after['mean_deviation']:.3f} 正答率 {eval_after['correct_rate']:.2f} "
-           f"({times['eval_after'] / 60:.1f} 分、合計 {times['total'] / 60:.1f} 分)")
-    if torch.cuda.is_available():
-        log_fn(f"seed {seed}: GPU メモリ最大 {torch.cuda.max_memory_allocated() / 1e9:.2f} GB、"
-               f"1 グループあたり {tr['seconds'] / max(1, cfg.updates * cfg.groups_per_update):.1f} 秒")
+           f"| {times['eval_after']:.0f} 秒 GPU最大 {pk()} | 合計 {times['total'] / 60:.1f} 分")
 
     n_groups = cfg.updates * cfg.groups_per_update
-    peak_gb = (torch.cuda.max_memory_allocated() / 1e9) if torch.cuda.is_available() else None
+    peaks = [x for x in [eval_before["peak_gpu_gb"], eval_after["peak_gpu_gb"]] + [e["peak_gpu_gb"] for e in tr["log"]]
+             if x is not None]
+    peak_gb = max(peaks) if peaks else None
+    if peak_gb is not None:
+        log_fn(f"seed {seed}: GPU メモリ最大(全段階) {peak_gb:.2f} GB、1 グループあたり {tr['seconds'] / max(1, n_groups):.1f} 秒")
     result = {"condition": "G1", "seed": seed, "config": asdict(cfg), "env_constants": env_constants(),
               "prompt_version": E.PROMPT_VERSION, "n_trainable_params": int(n_trainable),
               "eval_before": eval_before, "eval_after": eval_after, "training": tr["log"],
@@ -328,8 +360,10 @@ def main():
     from transformers import AutoModelForCausalLM, AutoTokenizer
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU が見つからない(G1 は GPU で実行する)")
-    device = "cuda"
+    device = "cuda:0"        # 1.5B fp16 は 1 枚に収まる。device_map は使わず、モデル全体を cuda:0 に置く(T4×2 でも分散しない)
     print("G1 設定:", json.dumps(asdict(cfg), ensure_ascii=False))
+    print(f"GPU 数 {torch.cuda.device_count()}、使用 {device}: {torch.cuda.get_device_name(0)} "
+          f"{torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
     print("環境定数:", env_constants(), "prompt_version:", E.PROMPT_VERSION)
     tokenizer = AutoTokenizer.from_pretrained(cfg.model)
     for seed in range(args.seed_start, args.seed_start + args.seeds):
@@ -340,7 +374,11 @@ def main():
         t = time.time()
         model = AutoModelForCausalLM.from_pretrained(cfg.model, dtype=torch.float16).to(device)   # seed ごとに新規
         model.eval()
-        print(f"seed {seed}: モデル読み込み {time.time() - t:.0f} 秒")
+        devs = sorted({str(p.device) for p in model.parameters()})
+        print(f"seed {seed}: モデル読み込み {time.time() - t:.0f} 秒、デバイス {devs}、"
+              f"GPU 使用中 {torch.cuda.memory_allocated(0) / 1e9:.2f} GB")
+        if devs != [device]:
+            raise RuntimeError(f"モデルが {device} 以外にある: {devs}")
         run_seed(model, tokenizer, cfg, seed, args.out_dir, device=device)
         del model
         torch.cuda.empty_cache()
