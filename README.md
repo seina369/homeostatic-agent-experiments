@@ -302,7 +302,8 @@ python3 homeostasis_prototype.py   # ほとんどのスクリプトはこれだ�
 言語モデル側の依存は`pip install -r llm_grounding/requirements.txt`(Colab/PyTorch経路。Mac/MLX経路は同ファイル内のコメント参照)。
 言語モデル側は`llm_grounding/`内の各ファイルとColabノートブックを参照。
 Colab の GPU 上限待ちの代替として Kaggle(週30時間、T4×2 / P100)でも同じスクリプトを動かせる:
-`llm_grounding/Kaggle_run_stage1.ipynb`(設定手順・保存先 `/kaggle/working`・G1 用セルまで)。
+`llm_grounding/Kaggle_run_stage1.ipynb`(固定のノートブック。何を実行するかは `llm_grounding/run_config.json` で
+指定し、Save & Run All で回す。保存先は `/kaggle/working/results`)。
 
 ## 現状
 

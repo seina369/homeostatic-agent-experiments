@@ -250,12 +250,19 @@ def run_seed(model, tokenizer, cfg: G1Config, seed: int, out_dir: str, device=No
     times["total"] = time.time() - t_all
     log_fn(f"seed {seed}: 学習後 平均逸脱 {eval_after['mean_deviation']:.3f} 正答率 {eval_after['correct_rate']:.2f} "
            f"({times['eval_after'] / 60:.1f} 分、合計 {times['total'] / 60:.1f} 分)")
+    if torch.cuda.is_available():
+        log_fn(f"seed {seed}: GPU メモリ最大 {torch.cuda.max_memory_allocated() / 1e9:.2f} GB、"
+               f"1 グループあたり {tr['seconds'] / max(1, cfg.updates * cfg.groups_per_update):.1f} 秒")
 
+    n_groups = cfg.updates * cfg.groups_per_update
+    peak_gb = (torch.cuda.max_memory_allocated() / 1e9) if torch.cuda.is_available() else None
     result = {"condition": "G1", "seed": seed, "config": asdict(cfg), "env_constants": env_constants(),
               "prompt_version": E.PROMPT_VERSION, "n_trainable_params": int(n_trainable),
               "eval_before": eval_before, "eval_after": eval_after, "training": tr["log"],
               "episodes_used_for_training": tr["episodes_used"], "nan_found": tr["nan_found"],
-              "elapsed_seconds": times}
+              "elapsed_seconds": times,
+              "seconds_per_group": (tr["seconds"] / n_groups) if n_groups else None,
+              "peak_gpu_memory_gb": peak_gb}
     result["judgement"] = judge_seed(result, cfg.min_rel_drop, cfg.time_limit_min)
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, f"g1_seed{seed:02d}.json")

@@ -1,0 +1,16 @@
+{
+  "_comment": "Kaggle_run_stage1.ipynb が読む実行設定。stage: g1_smoke | g1 | c0 | c0prime | t1。切り替えはこのファイルを直して push し、同じノートブックを Save & Run All。",
+  "stage": "g1_smoke",
+  "seeds": 1,
+  "seed_start": 0,
+  "updates": 2,
+  "eval_episodes": 1,
+  "groups_per_update": 4,
+  "G": 8,
+  "lr": 1e-5,
+  "beta_kl": 0.04,
+  "micro_batch": 0,
+  "episodes": 30,
+  "run_tests": true,
+  "extra_args": []
+}
