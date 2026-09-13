@@ -39,6 +39,7 @@ class GRPOConfig:
     epochs_per_batch: int = 1     # 1 なら on-policy(比率=1)。>1 でクリップが効く。
     grad_clip: float = 1.0
     adv_eps: float = 1e-6
+    micro_batch: int = 0          # 勾配つき採点を何本ずつに分けるか(0 = 一括)。結果は同じ、メモリが減る。
     lora_r: int = 8
     lora_alpha: int = 16
     lora_dropout: float = 0.0
@@ -176,49 +177,72 @@ class GRPOTrainer:
             return r
         return (r - r.mean()) / (r.std(unbiased=False) + eps)
 
+    def _chunks(self, n):
+        """応答の添字を cfg.micro_batch ごとに区切る(0 なら一括)。"""
+        mb = self.cfg.micro_batch or n
+        return [list(range(s, min(s + mb, n))) for s in range(0, n, mb)]
+
+    def _score_chunked(self, prompt_ids, responses, ref=False):
+        """no-grad の採点を micro_batch ごとに行い、応答ごとの logp(detach)を返す。"""
+        out = [None] * len(responses)
+        for idx in self._chunks(len(responses)):
+            sub = [responses[i] for i in idx]
+            res = self.score_ref(prompt_ids, sub) if ref else [lp.detach() for lp, _ in self.score(prompt_ids, sub, grad=False)]
+            for j, i in enumerate(idx):
+                out[i] = res[j]
+        return out
+
     def step(self, groups):
         """groups: list of dict(prompt_ids=[...], responses=[[...], ...], rewards=[...])。
-        戻り値: dict(loss, pg, kl, n_tokens)。cfg.epochs_per_batch 回更新する。"""
+        戻り値: dict(loss, pg, kl, n_tokens)。cfg.epochs_per_batch 回更新する。
+        損失 = 応答平均の方策勾配項 + β × 応答平均の KL(応答ごとにトークン平均)。
+        cfg.micro_batch > 0 なら、勾配つきの採点をその本数ずつに分けて backward を積む
+        (合計 N で割るので一括のときと同じ損失・同じ勾配。メモリを抑えるため)。"""
         cfg = self.cfg
         # old と ref は更新前に一度だけ計算(no grad)
         prepared = []
+        n_total = 0
         for g in groups:
             adv = self.advantages(g["rewards"], cfg.adv_eps)
-            old = [lp.detach() for lp, _ in self.score(g["prompt_ids"], g["responses"], grad=False)]
-            ref = self.score_ref(g["prompt_ids"], g["responses"])
+            old = self._score_chunked(g["prompt_ids"], g["responses"])
+            ref = self._score_chunked(g["prompt_ids"], g["responses"], ref=True)
             prepared.append((g, adv, old, ref))
+            n_total += sum(1 for r in g["responses"] if len(r) > 0)
+        if n_total == 0:
+            return {"loss": 0.0, "pg": 0.0, "kl": 0.0, "n_tokens": 0}
         stats = {}
         for _ in range(cfg.epochs_per_batch):
             self.model.train()
             self.optimizer.zero_grad()
-            pg_terms, kl_terms, n_tok = [], [], 0
+            pg_sum, kl_sum, n_tok = 0.0, 0.0, 0
             for g, adv, old, ref in prepared:
-                new = self.score(g["prompt_ids"], g["responses"], grad=True)
-                for i, (logp, _) in enumerate(new):
-                    if logp.numel() == 0:
-                        continue
-                    ratio = torch.exp(logp - old[i])
-                    a = adv[i].to(logp.device)
-                    unclipped = ratio * a
-                    clipped = torch.clamp(ratio, 1.0 - cfg.clip_eps, 1.0 + cfg.clip_eps) * a
-                    pg = -torch.minimum(unclipped, clipped).mean()
-                    r = ref[i] - logp
-                    kl = (torch.exp(r) - r - 1.0).mean()
-                    pg_terms.append(pg)
-                    kl_terms.append(kl)
-                    n_tok += logp.numel()
-            if not pg_terms:
-                return {"loss": 0.0, "pg": 0.0, "kl": 0.0, "n_tokens": 0}
-            pg_mean = torch.stack(pg_terms).mean()
-            kl_mean = torch.stack(kl_terms).mean()
-            loss = pg_mean + cfg.beta_kl * kl_mean
-            loss.backward()
+                for idx in self._chunks(len(g["responses"])):
+                    sub = [g["responses"][i] for i in idx]
+                    new = self.score(g["prompt_ids"], sub, grad=True)
+                    chunk_terms = []
+                    for j, i in enumerate(idx):
+                        logp = new[j][0]
+                        if logp.numel() == 0:
+                            continue
+                        ratio = torch.exp(logp - old[i])
+                        a = adv[i].to(logp.device)
+                        unclipped = ratio * a
+                        clipped = torch.clamp(ratio, 1.0 - cfg.clip_eps, 1.0 + cfg.clip_eps) * a
+                        pg = -torch.minimum(unclipped, clipped).mean()
+                        r = ref[i] - logp
+                        kl = (torch.exp(r) - r - 1.0).mean()
+                        chunk_terms.append(pg + cfg.beta_kl * kl)
+                        pg_sum += pg.detach().item()
+                        kl_sum += kl.detach().item()
+                        n_tok += logp.numel()
+                    if chunk_terms:
+                        (torch.stack(chunk_terms).sum() / n_total).backward()
             params = [p for grp in self.optimizer.param_groups for p in grp["params"]]
             if cfg.grad_clip:
                 torch.nn.utils.clip_grad_norm_(params, cfg.grad_clip)
             self.optimizer.step()
             if self.post_step is not None:
                 self.post_step()
-            stats = {"loss": loss.detach().item(), "pg": pg_mean.detach().item(),
-                     "kl": kl_mean.detach().item(), "n_tokens": n_tok}
+            pg_mean, kl_mean = pg_sum / n_total, kl_sum / n_total
+            stats = {"loss": pg_mean + cfg.beta_kl * kl_mean, "pg": pg_mean, "kl": kl_mean, "n_tokens": n_tok}
         return stats
