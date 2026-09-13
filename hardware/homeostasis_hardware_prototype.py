@@ -41,6 +41,18 @@
      不一致が本当に「損傷」を正しく代理できているかは、部品が届いてから実測で
      検証が要る。床材の違いや電圧のゆらぎでも同様の信号が出うるため、これは
      まだ確定した設計ではない)。
+  6. Mockの「dock」行動は、ドック位置にいれば必ず充電に成功するという非現実的な
+     前提を置いていた。RealHardwareInterfaceのdocstringで触れている通り、有志による
+     Cozmoの再現実装ではこの方式でもドッキング成功率はおよそ5割程度にとどまって
+     おり、「絶対に成功する」設計ではない。この非対称を埋めるため DOCK_SUCCESS_PROB
+     を導入し、ドック位置で「dock」を選んでも一定確率で充電に失敗する(空振りに
+     終わる)よう改めた(実世界実験への移行前に、PC上で潰せる楽観的な前提を減らす
+     狙い)。この変更を検証する過程で、dock_success_countが「ドック位置でdockを
+     選んだ回数」を数えているだけで、確率的な充電の成否そのものは見ていない
+     診断上のバグに気づいた。充電を導入した当初はこれで一致していたが(位置さえ
+     合っていれば必ず充電できたため)、確率化した今は「試みた回数」と「実際に
+     充電できた回数」がずれる。行動前後のエネルギー値を比較して実際に充電できた
+     場合のみ数えるよう修正した。
 
 未解決のまま残していること:
   状態空間(センサー3種+視覚シーン+ドック距離)が広がってきており、要件7の
@@ -49,6 +61,12 @@
   シミュレーションほど深刻にならない可能性もあり、確度の低い懸念として様子見にとどめ、
   今回はタブラー版のまま進める(必要になれば homeostasis_nn_prototype.py のNNエージェント
   への切り替えを検討する)。
+
+  また、ドック機構については依然として次の3点が未解決のまま残っている。(a)幅広接点が
+  位置ズレによって隣接した別の電極とブリッジし短絡する可能性、(b)最終接近がオドメトリ
+  頼みで、途中の姿勢を外部から確認できない「見えない」状態で行われること、(c)ドッキング
+  失敗時に生じうる衝突・接触のリスクをMockが反映していないこと(今回改めたのは充電の
+  成否だけで、失敗時に物理的な接触・衝突が起きる可能性そのものは考慮していない)。
 
 注意: これはフェーズ1限定のプロトタイプであり、計画書のフェーズ3(外部監督組織)を
 経ていない。要件4(自己保存本能・罰による不可逆な削除)は一切実装しない。
@@ -86,6 +104,13 @@ DOCK_SCENE_POSITION = (0, 0)
 # 「dock」行動を、ドック位置で選んだ場合の1ステップあたりの充電量(暫定値)。
 # 実機の充電電流・バッテリー容量が確定次第、現実的な値に調整する。
 CHARGE_RATE_PER_STEP = 8.0
+
+# ドック接続時の充電成功率(暫定値)。RealHardwareInterfaceのdocstringで触れている
+# 通り、有志によるCozmoの再現実装でも、この方式での接続成功率はおよそ5割程度に
+# とどまっている。以前のMockは「ドック位置でdockを選べば必ず充電できる」という
+# 非現実的な前提を置いていたため、この成功率を反映し、失敗時は充電なしの空振りとして
+# 扱う(2026-08-04に発見した欠陥の修正)。
+DOCK_SUCCESS_PROB = 0.5
 
 # 損傷が発生する確率(暫定値)。移動する行動の方が、静止系の行動(stay/dock)より
 # 損傷リスクが高いという当たり前の因果関係を持たせる(2026-08-04の議論。以前は
@@ -327,11 +352,14 @@ class MockHardwareInterface(HardwareInterface):
         # 損傷は自動回復させない。モーターの過負荷・車体の破損といった実際の
         # 物理的な損耗は、時間が経てば自然に治るものではないため。
 
-        # 充電: 「dock」を選び、かつドック位置にいる場合のみ充電される。
-        # ドック位置にいない状態でdockを選んでも、位置合わせの空振りとして
-        # エネルギーは通常のペースで減るだけで恩恵はない。
+        # 充電: 「dock」を選び、かつドック位置にいる場合のみ充電を試みる。ただし
+        # 実機のドッキングは常に成功するとは限らないため(DOCK_SUCCESS_PROB参照)、
+        # ドック位置にいてdockを選んでも一定確率で充電に失敗する(空振りに終わる)。
+        # ドック位置にいない状態でdockを選んだ場合は、これまで通り位置合わせの
+        # 空振りとして扱う。
         if action == "dock" and (self.scene_row, self.scene_col) == DOCK_SCENE_POSITION:
-            self.energy += CHARGE_RATE_PER_STEP
+            if self.rng.random() < DOCK_SUCCESS_PROB:
+                self.energy += CHARGE_RATE_PER_STEP
 
         self.energy = float(np.clip(self.energy, 0.0, 100.0))
         self.damage = float(np.clip(self.damage, 0.0, 100.0))
@@ -612,7 +640,7 @@ def run(hw: HardwareInterface, n_episodes=200, dry_run_fast=True, agent=None, q_
         if hasattr(hw, "reset"):
             hw.reset()  # 模擬実装のみ持つ便宜メソッド。実機では初期化不要(常時稼働)。
 
-        state, _ = discretize(hw)
+        state, raw_values = discretize(hw)
         deviations = []
         stay_count = 0
         dock_success_count = 0
@@ -643,6 +671,7 @@ def run(hw: HardwareInterface, n_episodes=200, dry_run_fast=True, agent=None, q_
                 action = agent.best_action(state)
 
             dock_bin_before = state[4]  # (e_bin, t_bin, d_bin, scene_bin, dock_bin)
+            energy_before_action = raw_values[0]
 
             hw.do_action(action)
             if not dry_run_fast:
@@ -667,7 +696,13 @@ def run(hw: HardwareInterface, n_episodes=200, dry_run_fast=True, agent=None, q_
                 passive_count += 1
             if action == "dock":
                 if dock_bin_before == 0:
-                    dock_success_count += 1
+                    # 位置が合っていても、DOCK_SUCCESS_PROBに従って充電が空振りする
+                    # ことがあるため、「試みた」ではなく「実際にエネルギーが増えたか」
+                    # で成功を判定する(2026-08-04に発見した診断上のバグの修正)。
+                    # 注: エネルギーが既に100近くで頭打ちの場合、成功しても増分が
+                    # クリップされ失敗と区別できない稀なケースが残る。
+                    if raw_values[0] > energy_before_action:
+                        dock_success_count += 1
                 else:
                     # ドックにいないのに「dock」を選んだ = 実質stayと同じ消極的な選択
                     passive_count += 1
