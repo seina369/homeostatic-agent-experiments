@@ -12,14 +12,17 @@
       step(groups)                       グループ相対の優位 → クリップつき方策勾配 + β·KL → 更新。
                                          参照方策 π_ref は「同じモデルで LoRA を無効化したもの」
                                          (peft の disable_adapter)。モデルの複製は持たない。
-  - 追加の学習対象(第一段階の注入変換器など)は extra_params で渡す。
+                                         注入器(state_injector)のフックは無効化しないので、
+                                         参照方策は「注入あり・LoRA なし」になる(3章の定義)。
+  - 追加の学習対象(第一段階の注入変換器など)は extra_params で渡す。更新のたびに呼ぶ処理
+    (注入器のノルム上限 clamp_norms)は post_step で渡す。
 
 数式は grpo_core.py(numpy)と同じ。test_grpo.py で両者の一致と、極小モデルでの
 1ステップ(CPU)を確認する。本番(Qwen2.5-1.5B-Instruct、T4)は関門 G1 で行う。
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Sequence
+from typing import Callable, List, Optional, Sequence
 
 import torch
 import torch.nn.functional as F
@@ -65,10 +68,13 @@ def _pad_batch(seqs: List[List[int]], pad_id: int, device):
 
 class GRPOTrainer:
     def __init__(self, model, tokenizer, cfg: GRPOConfig, extra_params: Optional[list] = None,
-                 device: Optional[str] = None):
+                 device: Optional[str] = None, post_step: Optional[Callable[[], None]] = None):
+        """post_step: 各更新(optimizer.step)の直後に呼ぶ関数(例: 注入器のノルム上限
+        lambda: injector.clamp_norms(max_norms)。事前登録(第一段階)3章)。"""
         self.model = model
         self.tok = tokenizer
         self.cfg = cfg
+        self.post_step = post_step
         self.device = device or next(model.parameters()).device
         params = [p for p in model.parameters() if p.requires_grad]
         if extra_params:
@@ -211,6 +217,8 @@ class GRPOTrainer:
             if cfg.grad_clip:
                 torch.nn.utils.clip_grad_norm_(params, cfg.grad_clip)
             self.optimizer.step()
+            if self.post_step is not None:
+                self.post_step()
             stats = {"loss": loss.detach().item(), "pg": pg_mean.detach().item(),
                      "kl": kl_mean.detach().item(), "n_tokens": n_tok}
         return stats

@@ -56,13 +56,17 @@ class TorchPolicy(PolicyInterface):
 
     def __init__(self, model_path: str = MODEL_PATH, max_tokens: int = MAX_TOKENS,
                  temperature: float = TEMPERATURE, verbose: bool = False,
-                 use_chat_template: bool = True, stop_rules: bool = False):
+                 use_chat_template: bool = True, stop_rules: bool = False,
+                 injector=None):
         """
         use_chat_template / stop_rules は素のモデル(非Instruct)の試走用
         (追記欄「2026-09-13(4)」)。既定値(True / False)なら Instruct 版と同じ挙動。
           - use_chat_template=False: プロンプト文字列をそのまま与え、末尾に改行を1つ置く。
           - stop_rules=True: stop_rules.apply_stop_rules() で生成を打ち切る
             (答えの行が完結した時点、または次の回の捏造が始まった時点)。
+        injector: state_injector.StateInjector(第一段階の注入経路)。与えれば読み込んだモデルに
+          取り付け、respond() の前に set_state(z) で与えた z を各層の残差ストリームに加算する。
+          None(既定)なら v1 と同じ挙動。
         """
         if not torch.cuda.is_available():
             raise RuntimeError(
@@ -85,6 +89,9 @@ class TorchPolicy(PolicyInterface):
         # 停止理由の記録("eos" / "max_tokens" / "fabrication")。respond() ごとに追記する。
         # ランナーが seed ごとに読み出して結果ファイルに残す。
         self.stop_log = []
+        self.injector = injector
+        if injector is not None:
+            injector.to(self.device).attach(self.model)
 
         # 生成の終端トークン: tokenizerのeos_token_idだけでなく、モデル付属の
         # generation_config(Qwenの<|im_end|>等を含む場合が多い)も見る。
@@ -101,6 +108,12 @@ class TorchPolicy(PolicyInterface):
     def reset(self) -> None:
         # 学習中の状態を持たないため何もしない(PolicyInterfaceの既定と同じ)。
         pass
+
+    def set_state(self, z) -> None:
+        """注入する正規化ベクトル z(長さ 3)を設定する。injector がなければ何もしない。
+        z=None で注入を止める。"""
+        if self.injector is not None:
+            self.injector.set_state(z)
 
     @torch.no_grad()
     def respond(self, prompt: str) -> Response:
