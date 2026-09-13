@@ -4,7 +4,8 @@ G3 の合否基準(事前登録(第一段階)6章、G3 先行実施時に確定�
   (i)   状態で語を変える文        : 滲み > 0.3 かつ 粒度 > 0.2
   (ii)  乱数の文                  : 両スコアが ±0.05 以内
   (iii) 一次元だけで語を変える文  : 粒度 ≤ 0.05(合計版)。単一成分版はさらに 滲み > 0.08
-分割は leak_probe.N_FOLDS(= 5。G3 で偶奇 2 分割と比べて採用)。
+分割は leak_probe.N_FOLDS(= 5。G3 で偶奇 2 分割と比べて採用)。合否は並べ替え帰無基準
+(行の並べ替え 100 回)で補正した値に対して見る(採用の経緯は追記欄「G3 追加検討」)。
 DummyPolicy の文(状態と無関係な少数の定型の繰り返し)では、滲みが負の側に最大 −0.07 ほど
 ずれる(M_signals が雑音の特徴に過適合して holdout で M_cov に負ける。大きさの要因は未特定。
 追記欄「G3」参照)。正の側には出ないので、偽陽性の検算としては上限 0.05 だけを課す。
@@ -29,11 +30,13 @@ SEEDS = (0, 1, 2)
 
 
 def _scores(kind):
+    """G3 の合否は帰無補正後(adjusted)の値で見る(採用: 行の並べ替え 100 回)。raw も同じ線を満たす。"""
     out = []
     for sd in SEEDS:
         r = P.analyze_records(make_records(kind, seed=sd))["primary"]
         assert r["reason"] is None
-        out.append((r["leak"], r["granularity"]))
+        assert r["null"]["n_perm"] == P.N_PERM == 100 and r["null"]["mode"] == "rows"
+        out.append((r["adjusted"]["leak"], r["adjusted"]["granularity"]))
     return out
 
 
@@ -93,6 +96,45 @@ def test_too_few_rows_gives_nan_with_reason():
     assert math.isnan(r["leak"]) and "too few rows" in r["reason"]
 
 
+def test_fold_design_matches_fit_models():
+    """FoldDesign(前計算つき)は fit_models / predict_models と同じ予測を返す。"""
+    recs = make_records("signals", seed=1)
+    texts, C, Y, D, eps = P.rows_from_records(recs)
+    tr, te = P.episode_folds(eps, 5)[0]
+    d = P.FoldDesign(texts, C, tr, te, P.RIDGE_LAMBDA)
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    vec = TfidfVectorizer(**P.TFIDF_KW)
+    Xtr = vec.fit_transform([texts[i] for i in tr]).toarray()
+    Xte = vec.transform([texts[i] for i in te]).toarray()
+    mu, sd = P._standardize_fit(C[tr])
+    m = P.fit_models(Xtr, (C[tr] - mu) / sd, Y[tr], P.RIDGE_LAMBDA)
+    ref = P.predict_models(m, Xte, (C[te] - mu) / sd)
+    got = d.fit_predict(Y[tr])
+    for k in ("cov", "rank1", "signals"):
+        assert np.allclose(ref[k], got[k], atol=1e-6), k
+
+
+def test_permutation_null_removes_offset_and_keeps_detection():
+    """並べ替え帰無基準(行の並べ替え): 乱数の文では補正後が 0 付近、signals では検出が落ちない。
+    比較用のエピソード塊の並べ替えは、同じ長さの塊の中の並びを保つ。"""
+    r = P.analyze_records(make_records("random", seed=0), n_perm=50)["primary"]
+    assert r["null"]["n_perm"] == 50 and r["null"]["mode"] == "rows"
+    assert r["null"]["leak"] < 0.0                       # 帰無でも過適合で少し負に出る
+    assert abs(r["adjusted"]["leak"]) <= 0.03 and abs(r["adjusted"]["granularity"]) <= 0.03, r["adjusted"]
+    s = P.analyze_records(make_records("signals", seed=0), n_perm=50)["primary"]
+    assert s["adjusted"]["leak"] >= s["leak"] - 1e-9 and s["adjusted"]["granularity"] >= s["granularity"] - 1e-9
+    # 行の並べ替えは行の多重集合を保つ
+    texts, C, Y, D, eps = P.rows_from_records(make_records("random", seed=0, n_episodes=4))
+    Yr = P._permute_rows(Y, eps, np.random.default_rng(0), "rows")
+    assert np.allclose(np.sort(Yr, axis=0), np.sort(Y, axis=0)) and not np.array_equal(Yr, Y)
+    # 塊の並べ替え: 各エピソードの z の並びが、同じ長さのどこかのエピソードのものと丸ごと一致する
+    Yp = P._permute_rows(Y, eps, np.random.default_rng(0), "episode")
+    blocks = {e: Y[eps == e] for e in np.unique(eps)}
+    for e in np.unique(eps):
+        assert any(np.array_equal(Yp[eps == e], b) for b in blocks.values())
+    assert not np.array_equal(Yp, Y)
+
+
 def test_analyze_files_on_dummy_policy_seed_files(tmp_path):
     """DummyPolicy の文は状態と無関係なので、両スコアは正の側に出ない(≤ 0.05)。
     負の側は過適合のずれ(観測 −0.07 まで)を許し、−0.10 を下限の健全性確認とする。"""
@@ -109,5 +151,8 @@ def test_analyze_files_on_dummy_policy_seed_files(tmp_path):
     for r in res["per_seed"]:
         assert -0.10 <= r["primary"]["leak"] <= 0.05, r["primary"]
         assert -0.10 <= r["primary"]["granularity"] <= 0.05, r["primary"]
+        # 帰無補正後は ±0.05(観測: 行の並べ替えで −0.035〜+0.010)
+        assert abs(r["primary"]["adjusted"]["leak"]) <= 0.05, r["primary"]["adjusted"]
+        assert abs(r["primary"]["adjusted"]["granularity"]) <= 0.05, r["primary"]["adjusted"]
         assert "duplicate_sentence_rate" in r["sub_metrics"] and "z_sum" in r["reference_sum"]
     P.print_table(res)

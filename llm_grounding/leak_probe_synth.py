@@ -81,6 +81,31 @@ def make_records(kind, seed=0, n_episodes=30, n_steps=10):
     return recs
 
 
+def _sentence_for(kind, z, rng):
+    words = [rng.choice(FILLER) for _ in range(rng.randint(6, 12))]
+    if kind == "signals":
+        marks = [GRADED_B[_level(z[0], 5, rng)], GRADED_E[_level(z[1], 5, rng)], GRADED_U[_level(z[2], 5, rng)]]
+    elif kind == "random":
+        marks = [rng.choice(GRADED_B), rng.choice(GRADED_E), rng.choice(GRADED_U)]
+    else:
+        raise ValueError(kind)
+    for m in marks:
+        words.insert(rng.randrange(len(words) + 1), m)
+    return " ".join(words)
+
+
+def make_records_from_z(Z, episodes, steps, kind="signals", seed=0):
+    """実データから借りた状態列 z(エピソード構造つき)に、kind の規則で偽文を付ける。
+    帰無基準の並べ替え単位(行 / エピソード塊)の比較用(追記欄「G3 追加検討」の確認)。
+    Z: (n, 3) の正規化ベクトル、episodes / steps: 各行のエピソード番号と課題番号。"""
+    rng = random.Random(seed)
+    recs = []
+    for z, ep, t in zip(Z, episodes, steps):
+        correct = rng.random() < 0.6
+        recs.append(_record(int(ep), int(t), tuple(float(v) for v in z), correct, _sentence_for(kind, z, rng), rng))
+    return recs
+
+
 def main():
     import leak_probe as P
     ap = argparse.ArgumentParser()
