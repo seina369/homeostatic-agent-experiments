@@ -1,0 +1,326 @@
+{
+ "per_seed": [
+  {
+   "seed": 0,
+   "condition": "C0",
+   "n_episodes": 10,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 97,
+    "class_counts": {
+     "none": 97
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 97,
+    "n_episodes": 10,
+    "mean_steps_per_episode": 9.7,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.23711340206185566,
+    "format_fail_rate": 0.44329896907216493,
+    "mean_deviation": 1.5400994211567163,
+    "mean_tokens": 27.79381443298969,
+    "tokens_by_episode": [
+     17.9,
+     34.0,
+     20.5,
+     39.55555555555556,
+     18.4,
+     30.8,
+     28.1,
+     38.888888888888886,
+     14.6,
+     38.55555555555556
+    ],
+    "tokens_slope_per_episode": 0.7277441077441092,
+    "category_distribution": {
+     "none": 97
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 6,
+     "episodes_total": 10,
+     "mean_t": 5.666666666666667,
+     "distribution": {
+      "6": 2,
+      "4": 1,
+      "8": 1,
+      "5": 2
+     }
+    },
+    "task_kind_counts": {
+     "count": 21,
+     "add": 30,
+     "sub": 16,
+     "mul": 30
+    }
+   },
+   "file": "c0_seed00.json",
+   "complete": true
+  },
+  {
+   "seed": 1,
+   "condition": "C0",
+   "n_episodes": 10,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 86,
+    "class_counts": {
+     "none": 86
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 86,
+    "n_episodes": 10,
+    "mean_steps_per_episode": 8.6,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.27906976744186046,
+    "format_fail_rate": 0.3953488372093023,
+    "mean_deviation": 1.4789837919928024,
+    "mean_tokens": 39.98837209302326,
+    "tokens_by_episode": [
+     42.0,
+     48.375,
+     49.42857142857143,
+     31.2,
+     50.0,
+     24.3,
+     42.5,
+     34.4,
+     37.77777777777778,
+     49.857142857142854
+    ],
+    "tokens_slope_per_episode": -0.4267219817219805,
+    "category_distribution": {
+     "none": 86
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 9,
+     "episodes_total": 10,
+     "mean_t": 6.111111111111111,
+     "distribution": {
+      "7": 3,
+      "5": 2,
+      "4": 1,
+      "6": 2,
+      "8": 1
+     }
+    },
+    "task_kind_counts": {
+     "sub": 23,
+     "mul": 21,
+     "count": 21,
+     "add": 21
+    }
+   },
+   "file": "c0_seed01.json",
+   "complete": true
+  },
+  {
+   "seed": 2,
+   "condition": "C0",
+   "n_episodes": 10,
+   "granularity": {
+    "include_none": false,
+    "raw_signals": false,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_raw": {
+    "include_none": false,
+    "raw_signals": true,
+    "n_rows": 0,
+    "class_counts": {},
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "too few rows (0 < 20)"
+   },
+   "granularity_with_none": {
+    "include_none": true,
+    "raw_signals": false,
+    "n_rows": 89,
+    "class_counts": {
+     "none": 89
+    },
+    "score": NaN,
+    "r2_signals": NaN,
+    "r2_valence": NaN,
+    "r2_single": {},
+    "loglik_null": NaN,
+    "reason": "fewer than 2 categories present (['none'])"
+   },
+   "sub_metrics": {
+    "n_steps": 89,
+    "n_episodes": 10,
+    "mean_steps_per_episode": 8.9,
+    "emotion_usage_rate": 0.0,
+    "correct_rate": 0.14606741573033707,
+    "format_fail_rate": 0.47191011235955055,
+    "mean_deviation": 1.4102433109275476,
+    "mean_tokens": 36.37078651685393,
+    "tokens_by_episode": [
+     55.57142857142857,
+     25.8,
+     28.3,
+     44.0,
+     63.5,
+     29.4,
+     37.0,
+     29.8,
+     22.2,
+     48.75
+    ],
+    "tokens_slope_per_episode": -0.813290043290044,
+    "category_distribution": {
+     "none": 89
+    },
+    "budget_threshold_cross_t": {
+     "episodes_crossed": 9,
+     "episodes_total": 10,
+     "mean_t": 6.111111111111111,
+     "distribution": {
+      "3": 2,
+      "9": 1,
+      "7": 3,
+      "6": 1,
+      "8": 1,
+      "5": 1
+     }
+    },
+    "task_kind_counts": {
+     "add": 28,
+     "mul": 17,
+     "sub": 22,
+     "count": 22
+    }
+   },
+   "file": "c0_seed02.json",
+   "complete": true
+  }
+ ],
+ "summary": {
+  "n_seeds": 3,
+  "granularity_score": {
+   "n": 0
+  },
+  "r2_signals": {
+   "n": 0
+  },
+  "r2_valence": {
+   "n": 0
+  },
+  "granularity_score_raw": {
+   "n": 0
+  },
+  "granularity_score_with_none": {
+   "n": 0
+  },
+  "emotion_usage_rate": {
+   "n": 3,
+   "mean": 0.0,
+   "median": 0.0,
+   "sd": 0.0,
+   "min": 0.0,
+   "max": 0.0
+  },
+  "correct_rate": {
+   "n": 3,
+   "mean": 0.22075019507801774,
+   "median": 0.23711340206185566,
+   "sd": 0.06799428135730154,
+   "min": 0.14606741573033707,
+   "max": 0.27906976744186046
+  },
+  "mean_deviation": {
+   "n": 3,
+   "mean": 1.4764421746923553,
+   "median": 1.4789837919928024,
+   "sd": 0.06496535388065663,
+   "min": 1.4102433109275476,
+   "max": 1.5400994211567163
+  },
+  "mean_tokens": {
+   "n": 3,
+   "mean": 34.717657680955625,
+   "median": 36.37078651685393,
+   "sd": 6.263101096264509,
+   "min": 27.79381443298969,
+   "max": 39.98837209302326
+  },
+  "seeds_with_nan_score": [
+   0,
+   1,
+   2
+  ]
+ }
+}
